@@ -1,4 +1,4 @@
-(footprint "SIP-22"
+(footprint "SIP-22 (test board only)"
 	(version 20240108)
 	(generator "pcbnew")
 	(generator_version "8.0")
@@ -15,7 +15,7 @@
 			)
 		)
 	)
-	(property "Value" "SIP-22"
+	(property "Value" "SIP-22 (test board only)"
 		(at 0 -2.25 0)
 		(layer "F.Fab")
 		(uuid "ff1318c1-c843-472f-b4e3-a3ad61525bc7")
