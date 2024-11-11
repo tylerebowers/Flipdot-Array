@@ -1,15 +1,15 @@
-(footprint "CAP_YX_10X16_RUB"
+(footprint "CAP_YX_5X11_RUB"
 	(version 20240108)
 	(generator "pcbnew")
 	(generator_version "8.0")
 	(layer "F.Cu")
-	(tags "35ZLH470MEFC10X16 ")
+	(tags "10YXF100MEFCT15X11 ")
 	(property "Reference" "REF**"
-		(at 3 -1.525 0)
+		(at 1 1.65 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "9351c4f5-fde4-4195-85ff-eace13749c0b")
+		(uuid "8b697dab-1721-403b-9354-76f67766524e")
 		(effects
 			(font
 				(size 1 1)
@@ -17,12 +17,12 @@
 			)
 		)
 	)
-	(property "Value" "CAP"
-		(at 2.475 0 0)
+	(property "Value" "CAP_YX_5X11_RUB"
+		(at 1.25 -1.45 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "48aefc95-5b7d-460b-9a0d-f06297b22017")
+		(uuid "d97746ef-4d8f-464e-9f2c-e98c0a624ed0")
 		(effects
 			(font
 				(size 1 1)
@@ -34,7 +34,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "6c1f6659-b358-42b6-b119-a0a48bffcb6e")
+		(uuid "ba7ca7c9-7013-4706-9d9a-2b6809ad9849")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -46,7 +46,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "2c748235-9adc-4ca7-9972-a5f67ebddf5e")
+		(uuid "54e1a509-9b15-44f7-b876-229f64c4cea1")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -58,7 +58,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "fbfed067-a338-45a5-82b9-7468c8058b60")
+		(uuid "fc6e07ca-1137-4e93-a26f-44cfbe8e3b2b")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -68,39 +68,39 @@
 	)
 	(attr through_hole)
 	(fp_line
-		(start -1.625 0)
-		(end -0.99 0)
+		(start -1.6675 0.0175)
+		(end -1.0325 0.0175)
 		(stroke
 			(width 0.1524)
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "b9d460ca-0d2a-4f14-b9cd-c5378cc6351b")
+		(uuid "81414cd5-6d44-4a29-9817-ef42a2c9e434")
 	)
 	(fp_line
-		(start -1.3075 -0.3175)
-		(end -1.3075 0.3175)
+		(start -1.35 -0.3)
+		(end -1.35 0.335)
 		(stroke
 			(width 0.1524)
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "c205c34f-8f29-4d64-aa2d-a56788db2884")
+		(uuid "64b88363-ced5-4bd5-b90a-90a25bb0ee3b")
 	)
 	(pad "1" thru_hole circle
 		(at 0 0)
-		(size 1.3716 1.3716)
-		(drill 0.8636)
+		(size 1.27 1.27)
+		(drill 0.762)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "cec7b3aa-90c1-477c-81aa-bb84629c5064")
+		(uuid "5067e19c-9991-4f73-8e83-dfe50297f573")
 	)
 	(pad "2" thru_hole circle
-		(at 5 0)
-		(size 1.3716 1.3716)
-		(drill 0.8636)
+		(at 2 0)
+		(size 1.27 1.27)
+		(drill 0.762)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "5b0f94c7-ee3f-466b-9add-cbfdc9332add")
+		(uuid "c032a2e5-4ea2-46a7-b779-f23331dc8daa")
 	)
 )
