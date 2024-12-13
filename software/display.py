@@ -92,6 +92,7 @@ class Display:
         GPIO.setup(self._srclr, GPIO.OUT)
         atexit.register(self._disable)
         atexit.register(self._clear)
+        self.all_off()
         self._disable()
         self._clear()
 
@@ -157,7 +158,9 @@ class Display:
 
 d = Display()
 while True:
+    print("all on")
     d.all_on()
-    sleep(10)
+    sleep(2)
+    print("all off")
     d.all_off()
-    sleep(10)
+    sleep(2)
