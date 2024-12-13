@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import math
+import atexit
 from time import sleep
 
 class Display:
@@ -84,12 +84,16 @@ class Display:
         # 21 cols, 7 rows
         self._shown = [0 for i in range(21)]
 
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self._ser, GPIO.OUT)
         GPIO.setup(self._oe, GPIO.OUT)
         GPIO.setup(self._rclk, GPIO.OUT)
         GPIO.setup(self._srclk, GPIO.OUT)
         GPIO.setup(self._srclr, GPIO.OUT)
+        atexit.register(self._disable)
+        atexit.register(self._clear)
+        self._disable()
+        self._clear()
 
     def _disable(self):
         GPIO.output(self._oe, GPIO.HIGH)
@@ -105,7 +109,7 @@ class Display:
     def write_dot(self, x, y, state):
         self._disable()
         self._clear()
-        if 0 <= x <= 21 and 0 <= y <= 7:
+        if not (0 <= x <= 21 and 0 <= y <= 7):
             return
 
         serial_data = 0
@@ -113,21 +117,47 @@ class Display:
             serial_data = serial_data | (1 << y)  #set row
             serial_data = serial_data | (1 << (x + 24 + (8 * (x // 8))))  #set col
             self._shown[x] |= (1 << y)
-        elif self._shown[x] & (1 << y) != 0:
+        elif not state and self._shown[x] & (1 << y) != 0:
             serial_data = serial_data | (1 << y+8)  #set row
             serial_data = serial_data | (1 << (x + 16 + (8 * (x // 8))))  #set col
             self._shown[x] &= ~(1 << y)
 
-        for i in range(64,0,-1):
-            GPIO.output(self._ser, GPIO.HIGH if serial_data & 1 else GPIO.LOW)
-            GPIO.output(self._srclk, GPIO.HIGH)
-            GPIO.output(self._srclk, GPIO.LOW)
-            serial_data >>= 1
+        if serial_data > 0:
+            for i in range(63,-1,-1):
+                GPIO.output(self._ser, GPIO.HIGH if serial_data & (1 << i) else GPIO.LOW)
+                GPIO.output(self._srclk, GPIO.HIGH)
+                GPIO.output(self._srclk, GPIO.LOW)
 
-        #move data into registers
-        GPIO.output(self._rclk, GPIO.HIGH)
-        GPIO.output(self._rclk, GPIO.LOW)
+            #move data into registers
+            GPIO.output(self._rclk, GPIO.HIGH)
+            GPIO.output(self._rclk, GPIO.LOW)
+            GPIO.output(self._ser, GPIO.LOW)
 
-        self._enable()
-        sleep(0.001)
-        self._disable()
+            self._enable()
+            sleep(0.001)
+            self._disable()
+
+    def write_display(self):
+        pass
+
+d = Display()
+for x in range(21):
+    d.write_dot(x,0,1)
+    #d.write_dot(x,0,0)
+for y in range(7):
+    d.write_dot(0,y,1)
+    #d.write_dot(0,y,0)
+
+for x in range(21):
+    d.write_dot(x,3,1)
+    #d.write_dot(x,0,0)
+for y in range(7):
+    d.write_dot(10,y,1)
+    #d.write_dot(0,y,0)
+
+for x in range(21):
+    d.write_dot(x,6,1)
+    #d.write_dot(x,0,0)
+for y in range(7):
+    d.write_dot(20,y,1)
+    #d.write_dot(0,y,0)
