@@ -109,15 +109,15 @@ class Display:
     def write_dot(self, x, y, state):
         self._disable()
         self._clear()
-        if not (0 <= x <= 21 and 0 <= y <= 7):
+        if not (0 <= x < 21 and 0 <= y < 7):
             return
 
         serial_data = 0
-        if state and self._shown[x] & (1 << y) == 0:
+        if state: # and self._shown[x] & (1 << y) == 0:
             serial_data = serial_data | (1 << y)  #set row
             serial_data = serial_data | (1 << (x + 24 + (8 * (x // 8))))  #set col
             self._shown[x] |= (1 << y)
-        elif not state and self._shown[x] & (1 << y) != 0:
+        elif not state: #and self._shown[x] & (1 << y) != 0:
             serial_data = serial_data | (1 << y+8)  #set row
             serial_data = serial_data | (1 << (x + 16 + (8 * (x // 8))))  #set col
             self._shown[x] &= ~(1 << y)
@@ -137,27 +137,27 @@ class Display:
             sleep(0.001)
             self._disable()
 
+    def all_off(self):
+        self._shown = [0 for _ in range(21)]
+        for y in range(7):
+            for x in range(21):
+                self.write_dot(x, y, False)
+        self._disable()
+        self._clear()
+
+    def all_on(self):
+        for y in range(7):
+            for x in range(21):
+                self.write_dot(x, y, True)
+        self._disable()
+        self._clear()
+
     def write_display(self):
         pass
 
 d = Display()
-for x in range(21):
-    d.write_dot(x,0,1)
-    #d.write_dot(x,0,0)
-for y in range(7):
-    d.write_dot(0,y,1)
-    #d.write_dot(0,y,0)
-
-for x in range(21):
-    d.write_dot(x,3,1)
-    #d.write_dot(x,0,0)
-for y in range(7):
-    d.write_dot(10,y,1)
-    #d.write_dot(0,y,0)
-
-for x in range(21):
-    d.write_dot(x,6,1)
-    #d.write_dot(x,0,0)
-for y in range(7):
-    d.write_dot(20,y,1)
-    #d.write_dot(0,y,0)
+while True:
+    d.all_on()
+    sleep(10)
+    d.all_off()
+    sleep(10)
