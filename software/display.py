@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import atexit
-from time import sleep
+import time
 
 class Display:
     """
@@ -114,11 +114,11 @@ class Display:
             return
 
         serial_data = 0
-        if state: # and self._shown[x] & (1 << y) == 0:
+        if state and self._shown[x] & (1 << y):
             serial_data = serial_data | (1 << y)  #set row
             serial_data = serial_data | (1 << (x + 24 + (8 * (x // 8))))  #set col
             self._shown[x] |= (1 << y)
-        elif not state: #and self._shown[x] & (1 << y) != 0:
+        elif not state and not self._shown[x] & (1 << y):
             serial_data = serial_data | (1 << y+8)  #set row
             serial_data = serial_data | (1 << (x + 16 + (8 * (x // 8))))  #set col
             self._shown[x] &= ~(1 << y)
@@ -135,7 +135,7 @@ class Display:
             GPIO.output(self._ser, GPIO.LOW)
 
             self._enable()
-            sleep(0.001)
+            time.sleep(0.001)
             self._disable()
 
     def all_off(self):
@@ -153,14 +153,7 @@ class Display:
         self._disable()
         self._clear()
 
-    def write_display(self):
-        pass
-
-d = Display()
-while True:
-    print("all on")
-    d.all_on()
-    sleep(2)
-    print("all off")
-    d.all_off()
-    sleep(2)
+    def write_display(self, new_display):
+        for x in range(21):
+            for y in range(7):
+                self.write_dot(x, y, new_display[x] & (1 << y))
