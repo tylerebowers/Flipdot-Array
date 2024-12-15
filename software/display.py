@@ -153,7 +153,9 @@ class Display:
         self._disable()
         self._clear()
 
-    def write_display(self, new_display):
-        for x in range(21):
-            for y in range(7):
-                self.write_dot(x, y, new_display[x] & (1 << y))
+    def write_display(self, new_display, start_x=0, start_y=0, delay=0):
+        for x in range(start_x, min(21, len(new_display)+start_x)):
+            for y in range(start_y, 7):
+                if delay > 0:
+                    time.sleep(delay)
+                self.write_dot(x, y, new_display[x-start_x] & (1 << y-start_y))
