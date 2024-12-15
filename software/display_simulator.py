@@ -1,53 +1,43 @@
 import tkinter as tk
+import numpy as np
 import time
 
 class Display:
     def __init__(self, scale=60):
         # 21 cols, 7 rows
-        self._shown = [0 for i in range(21)]
+        self.shown = np.zeros((21,7),dtype=np.bool_)
         self._simulator = _Display_Simulator(scale)
 
-    def _disable(self):
-        pass
-
-    def _enable(self):
-        pass
-
-    def _clear(self):
-        pass
-
     def write_dot(self, x, y, state):
-        self._disable()
-        self._clear()
         if not (0 <= x < 21 and 0 <= y < 7):
             return
 
         self._simulator.paint(x, y, state)
-        if state and self._shown[x] & (1 << y):
-            self._shown[x] |= (1 << y)
-        elif not state and not self._shown[x] & (1 << y):
-            self._shown[x] &= ~(1 << y)
+        if state and not self.shown[x][y]:
+            self.shown[x][y] = True
+        elif not state and self.shown[x][y]:
+            self.shown[x][y] = False
 
     def all_off(self):
         for y in range(7):
             for x in range(21):
                 self.write_dot(x, y, False)
-        self._disable()
-        self._clear()
 
     def all_on(self):
         for y in range(7):
             for x in range(21):
                 self.write_dot(x, y, True)
-        self._disable()
-        self._clear()
 
-    def write_display(self, new_display, start_x=0, start_y=0, delay=0):
+    def write_display(self, new_display, start_x=0, start_y=0, delay=0, bitwize=False):
         for x in range(start_x, min(21, len(new_display)+start_x)):
-            for y in range(start_y, 7):
-                if delay > 0:
+            if bitwize:
+                for y in range(start_y, 7):
                     time.sleep(delay)
-                self.write_dot(x, y, new_display[x-start_x] & (1 << y-start_y))
+                    self.write_dot(x, y, new_display[x-start_x] & (1 << y))
+            else:
+                for y in range(start_y, min(7, len(new_display[x-start_x])+start_y)):
+                    time.sleep(delay)
+                    self.write_dot(x, y, new_display[x-start_x][y-start_y])
 
 class _Display_Simulator(tk.Frame):
     def __init__(self, scale=60):

@@ -1,3 +1,8 @@
+Examples:
+    Row_1_L & Col_1_H -> (1,1) Yellow
+    Row_1_H & Col_1_L -> (1,1) Black
+Order:
+(Serial sending order is reversed since it is being "filled up")
 Row_1_L
 Row_2_L
 Row_3_L
@@ -62,3 +67,4 @@ Col_21_H
 Col_22_H (NOT USED)
 Col_23_H (NOT USED)
 Col_24_H (NOT USED)
+Make sure that a High and Low are for the same output are not on at the same time!
