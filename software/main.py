@@ -43,7 +43,7 @@ def game_of_life(d):
                         d.write_dot(x, y, True)
 
     while True:
-        d.write_display(np.rangom.randint(2,size=(21,7)))
+        d.write_display(np.random.randint(2,size=(21,7)))
         for i in range(60):
             update_grid()
             time.sleep(0.5)
