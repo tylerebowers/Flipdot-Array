@@ -1,5 +1,5 @@
-#from display import Display
-from display_simulator import Display
+from display import Display
+#from display_simulator import Display
 from libraries import *
 import numpy as np
 import datetime
@@ -20,8 +20,7 @@ def clock(d, hours_24=False):
             time.sleep(1)
 
 def game_of_life(d):
-    print(np.random.randint(2, size=(21,7))[0][0])
-    d.write_display(np.random.randint(2, size=(21,7)))
+    #d.write_display(np.random.randint(2, size=(21,7)))
 
     def count_neighbors(x, y):
         total = 0
@@ -44,8 +43,10 @@ def game_of_life(d):
                         d.write_dot(x, y, True)
 
     while True:
-        update_grid()
-        time.sleep(0.1)
+        d.write_display(np.rangom.randint(2,size=(21,7)))
+        for i in range(60):
+            update_grid()
+            time.sleep(0.5)
 
 def pong(d):
     pass
@@ -57,5 +58,8 @@ def date(d):
     pass
 
 d = Display()
-clock(d)
+#clock(d)
 #game_of_life(d)
+time.sleep(5)
+d.all_on()
+

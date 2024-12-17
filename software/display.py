@@ -21,7 +21,7 @@ class Display:
         GPIO.setup(self._srclr, GPIO.OUT)
         atexit.register(self._disable)
         atexit.register(self._clear)
-        self.all_off()
+        self.all_off(force=True)
         self._disable()
         self._clear()
 
@@ -36,18 +36,18 @@ class Display:
         GPIO.output(self._srclr, GPIO.HIGH)
         GPIO.output(self._ser, GPIO.LOW)
 
-    def write_dot(self, x, y, state):
+    def write_dot(self, x, y, state, force=False):
         self._disable()
         self._clear()
         if not (0 <= x < 21 and 0 <= y < 7):
             return
 
         serial_data = 0
-        if state and not self.shown[x][y]:
+        if state and (not self.shown[x][y] or force):
             serial_data = serial_data | (1 << y)  #set row
             serial_data = serial_data | (1 << (x + 24 + (8 * (x // 8))))  #set col
             self.shown[x][y] = True
-        elif not state and self.shown[x][y]:
+        elif not state and (self.shown[x][y] or force):
             serial_data = serial_data | (1 << y+8)  #set row
             serial_data = serial_data | (1 << (x + 16 + (8 * (x // 8))))  #set col
             self.shown[x][y] = False
@@ -67,17 +67,17 @@ class Display:
             time.sleep(0.001)
             self._disable()
 
-    def all_off(self):
+    def all_off(self, force=False):
         for y in range(7):
             for x in range(21):
-                self.write_dot(x, y, False)
+                self.write_dot(x, y, False, force)
         self._disable()
         self._clear()
 
-    def all_on(self):
+    def all_on(self, force=False):
         for y in range(7):
             for x in range(21):
-                self.write_dot(x, y, True)
+                self.write_dot(x, y, True, force)
         self._disable()
         self._clear()
 
@@ -93,3 +93,4 @@ class Display:
                     self.write_dot(x, y, new_display[x - start_x][y - start_y])
         self._disable()
         self._clear()
+
