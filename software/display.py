@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import numpy as np
 import atexit
+import signal
 import time
 
 class Display:
@@ -19,9 +20,13 @@ class Display:
         GPIO.setup(self._rclk, GPIO.OUT)
         GPIO.setup(self._srclk, GPIO.OUT)
         GPIO.setup(self._srclr, GPIO.OUT)
-        atexit.register(self._disable)
-        atexit.register(self._clear)
+        atexit.register(self._cleanup)
+        signal.signal(signal.SIGTERM, self._cleanup)
         self.all_off(force=True)
+        self._disable()
+        self._clear()
+    
+    def _cleanup(self):
         self._disable()
         self._clear()
 
