@@ -1,5 +1,5 @@
-from display import Display
-#from display_simulator import Display
+#from display import Display
+from display_simulator import Display
 from libraries import *
 import numpy as np
 import datetime
@@ -58,8 +58,13 @@ def date(d):
     pass
 
 d = Display()
-#clock(d)
-#game_of_life(d)
-time.sleep(5)
+time.sleep(1)
 d.all_on()
+time.sleep(2)
+d.all_off()
+time.sleep(1)
+#clock(d)
+game_of_life(d)
+#time.sleep(5)
+#d.all_on()
 

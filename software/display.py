@@ -29,6 +29,7 @@ class Display:
     def _cleanup(self):
         self._disable()
         self._clear()
+        GPIO.cleanup()
 
     def _disable(self):
         GPIO.output(self._oe, GPIO.HIGH)
@@ -69,7 +70,7 @@ class Display:
             GPIO.output(self._ser, GPIO.LOW)
 
             self._enable()
-            time.sleep(0.001)
+            time.sleep(0.0002)
             self._disable()
 
     def all_off(self, force=False):
