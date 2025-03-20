@@ -1,3 +1,9 @@
+"""
+READ FIRST
+It is not recommended to change this file if you do not know what you are doing.
+Doing so can cause PERMANENT DAMAGE to the display or the RPi (if done incorrectly).
+Edit at your own risk.
+"""
 import RPi.GPIO as GPIO
 import numpy as np
 import atexit
