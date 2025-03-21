@@ -2,7 +2,6 @@ from interface.display_simulator import Display
 #from interface.display import Display
 import runners
 import uvicorn
-import logging
 import threading
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
@@ -15,7 +14,10 @@ d = Display()
 identities = {
     "Clock": runners.Clock,
     "Game of Life": runners.GameOfLife,
-    "Off": runners.Off
+    "Off": runners.Off,
+    "Scrolling Text": runners.ScrollingText,
+    "Date": runners.Date,
+    "Weather": runners.Weather,
 }
 new_mode = {"mode":"Clock", "params":{}}  
 
@@ -33,7 +35,7 @@ class Runner:
                     except Exception as e:
                         print(e)
                 else: 
-                    logging.ERROR("Mode not in identities")
+                    print("Mode not in identities")
                 new_mode = None
             else:
                 self.runner.update()
@@ -52,11 +54,12 @@ class WebServer:
         async def set_mode(request: Request):
             global new_mode
             new_mode = await request.json()
+            print("Received: ", new_mode)
             return templates.TemplateResponse("index.html", {"request": request, "display_mode": new_mode.get("mode", None)})
         
         
     def run(self):
-        uvicorn.run(self.app, host="0.0.0.0", port=8000)
+        uvicorn.run(self.app, port=8000)
     
 
 if __name__ == "__main__":

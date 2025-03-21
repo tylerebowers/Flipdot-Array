@@ -1,6 +1,7 @@
-from libraries import *
+import libraries
 import numpy as np
 import datetime
+import requests
 import time
 
 
@@ -14,19 +15,18 @@ class Clock:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        print(params)
-        self.hours_24 = params.get("format", None)=="24"
+        self.hours_24 = bool(params.get("hours_24", False))
         self.shown_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
     
     def update(self):
         now = datetime.datetime.now()
         if now.minute != self.shown_time.minute:
             self.shown_time = now
-            self.d.write_display(numbers_4x7[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)], bitwise=True)
-            self.d.write_display(numbers_4x7[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5, bitwise=True)
-            self.d.write_display(special_8[0], start_x=10, bitwise=True)
-            self.d.write_display(numbers_4x7[int(now.minute / 10)], start_x=12, bitwise=True)
-            self.d.write_display(numbers_4x7[now.minute % 10], start_x=17, bitwise=True)
+            self.d.write_display(libraries.numbers_7x4[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)], bitwise=True)
+            self.d.write_display(libraries.numbers_7x4[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5, bitwise=True)
+            self.d.write_display(libraries.ascii_7[":"], start_x=10, bitwise=True)
+            self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12, bitwise=True)
+            self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17, bitwise=True)
         time.sleep(1)
 
     def __str__(self):
@@ -72,46 +72,89 @@ class Off:
     def __str__(self):
         return "Off"
 
-class scrolling_text:
+class ScrollingText:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        self.text = params.get("text", "X")
+        self.text = params.get("text", "")
+        self.sleep_time = 1 / int(params.get('fps', None) or 2)
+        self.gap = int(params.get('gap', None) or 6) #gap between loops
         self.x = 0
-        self.text_display = []
-        for l in self.text:
-            text_display += alphabet_Wx7[l] + [0]
+        self.display_single = [a for tup in (libraries.ascii_7[l] + [0] for l in self.text) for a in tup][:-1]
+        self.single_length = len(self.display_single)
+        self.display_loopable =  self.display_single + ([0] * self.gap) + self.display_single
+        self.loopable_length = len(self.display_single) + self.gap
 
 
     def update(self):
-        x += 1
-        if x >= len(self.text_display):
-            x = 0
-        self.d.write_display(self.text_display[self.x:], bitwise=True)
+        if self.single_length <=21:
+            self.d.write_display(self.display_single, bitwise=True)
+        else:
+            self.d.write_display(self.display_loopable[self.x:self.x+21], bitwise=True)
+            self.x = (self.x + 1) % self.loopable_length
+        time.sleep(self.sleep_time)
 
     def __str__(self):
         return "Scrolling Text"
-
-class Temperature:
+    
+class Date:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        self.use_celcius = params.get("use_celcius", False)
-        self.shown_time = datetime.datetime.now() - datetime.timedelta(minutes=5)
+        self.shown_date = datetime.datetime.now() - datetime.timedelta(days=1)
 
     def update(self):
         now = datetime.datetime.now()
-        if now.minute != self.shown_time.minute:
-            temp = 67 #TODO
-            self.shown_time = now
-            self.d.write_display(numbers_4x7[int(temp/10)], start_x=6, bitwise=True)
-            self.d.write_display(numbers_4x7[int(temp%10)], start_x=11, bitwise=True)
-            #self.d.write_display(special["degrees"], start_x=11, bitwise=True)
+        if now.day != self.shown_date.day:
+            self.shown_date = now
+            date_display = [a for tup in (libraries.ascii_7[l] + [0] for l in now.strftime("%b%d")) for a in tup][:-1]
+            self.d.write_display(date_display, bitwise=True)
+        time.sleep(5)
+
+    def __str__(self):
+        return "Date"
+
+class Weather:
+    def __init__(self, d, params={}):
+        self.d = d
+        self.d.all_off()
+        self.use_celsius = params.get("use_celsius", False)
+        self.latitude = params.get("latitude", 0)
+        self.longitude = params.get("longitude", 0)
+        if self.latitude == 0 or self.longitude == 0:
+            try: 
+                r = requests.get("https://ipinfo.io").json()
+                self.latitude = r["loc"].split(",")[0]
+                self.longitude = r["loc"].split(",")[1]
+            except Exception as e:
+                print(e)
+        self.weather_api_url = f"https://api.open-meteo.com/v1/forecast?latitude={self.latitude}&longitude={self.longitude}&current=temperature_2m,weather_code"
+        self.last_update = datetime.datetime.now() - datetime.timedelta(minutes=5)
+
+    def update(self):
+        now = datetime.datetime.now()
+        if (now - self.last_update).total_seconds() > 300:
+            try: 
+                r = requests.get(self.weather_api_url).json()
+                temp = r["current"]["temperature_2m"]
+                code = r["current"]["weather_code"]
+            except Exception as e:
+                print(e)
+                return
+            self.last_update = now # we dont want to spam api if it is down
+            self.d.write_display(libraries.weather.get(code, []), start_x=0, bitwise=True)
+            if not self.use_celsius:
+                temp = (temp * 1.8) + 32
+            self.d.write_display(libraries.numbers_7x3[int(temp/10)], start_x=8, bitwise=True)
+            self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=12, bitwise=True)
+            self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16, bitwise=True)
+
         time.sleep(1)
 
     def __str__(self):
-        return "Temperature"
+        return "Weather"
     
+"""
 class Animator:
     def __init__(self, d, params):
         self.d.all_off()
@@ -124,13 +167,4 @@ class Animator:
         self.d.write_display(self.keyframes[self.frame], bitwise=self.bitwise)
         self.frame = (self.frame + 1) % len(self.keyframes)
         time.sleep(self.sleep_time)
-
-
-
-
-def date(d):
-    pass
-
-def weather(d): #icons (cloud rain sun)?
-    pass
-
+"""

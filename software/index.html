@@ -4,6 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flipdot Display Control</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e3e3e3;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #111;
+        }
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: inline-block;
+            text-align: left;
+            max-width: 400px;
+        }
+        .section {
+            padding: 15px 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        button {
+            background-color: #1121af;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        button:hover {
+            background-color: rgba(13, 46, 99, 0.714);
+        }
+        select, input[type="text"] {
+            padding: 6px;
+            margin: 6px 0;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+    </style>
     <script>
         function change_mode(mode, params) {
             fetch(window.location.origin + '/mode', {
@@ -18,24 +69,51 @@
 </head>
 <body>
     <h1>Control Flipdot Display</h1>
-    <hr>
-    <p>Current Mode: {{ display_mode }}</p>
-    <hr>
-    Clock
-    <form id="clock-format">
-        <label><input type="radio" name="mode" value="12" checked> 12 Hour</label><br>
-        <label><input type="radio" name="mode" value="24"> 24 Hour</label><br>
-    </form>
-    <button onclick="change_mode('Clock', {format: document.getElementById('clock-format').elements['mode'].value})">Set Mode</button>
-    <hr>
-    Game of Life
-    <ul>
-        <li> FPS: <input id="gol-fps"> </li>
-    </ul>
-    <button onclick="change_mode('Game of Life', {fps: document.getElementById('gol-fps').value})">Set Mode</button>
-    <hr>
-    Off
-    <button onclick="change_mode('Off', {})">Set Mode</button> 
-    <hr>
+    <div class="container">
+        <div class="section">
+            <strong>Clock</strong>
+            <label><input type="checkbox" id="clock-format"> 24 Hour</label>
+            <button onclick="change_mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked)})">Set Mode</button>
+        </div>
+
+        <div class="section">
+            <strong>Game of Life</strong>
+            <label>FPS: <select id="game-of-life-fps">
+                <option value=2>2</option>
+                <option value=1>1</option>
+                <option value=4>4</option>
+                <option value=8>8</option>
+            </select></label>
+            <button onclick="change_mode('Game of Life', {fps: document.getElementById('game-of-life-fps').value})">Set Mode</button>
+        </div>
+
+        <div class="section">
+            <strong>Scrolling Text</strong>
+            <label>Text: <input id="scrolling-text-text" value="text"></label>
+            <label>FPS: <select id="scrolling-text-fps">
+                <option value=2>2</option>
+                <option value=1>1</option>
+                <option value=4>4</option>
+                <option value=8>8</option>
+            </select></label>
+            <button onclick="change_mode('Scrolling Text', {fps: document.getElementById('scrolling-text-fps').value, text: document.getElementById('scrolling-text-text').value})">Set Mode</button>
+        </div>
+
+        <div class="section">
+            <strong>Weather</strong> <br>
+            <label><input type="checkbox" id="weather-format"> Use Celsius</label>
+            <button onclick="change_mode('Weather', {use_celsius: Boolean(document.getElementById('weather-format').checked)})">Set Mode</button>
+        </div>
+
+        <div class="section">
+            <strong>Date</strong> <br>
+            <button onclick="change_mode('Date', {})">Set Mode</button>
+        </div>
+
+        <div class="section">
+            <strong>Off</strong> <br>
+            <button onclick="change_mode('Off', {})">Set Mode</button>
+        </div>
+    </div>
 </body>
 </html>
