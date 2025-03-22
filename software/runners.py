@@ -174,9 +174,9 @@ class Power:
     def update(self):
         import os
         if self.choice == "reboot":
-            os.system("systemctl reboot")
+            os.system("sudo /bin/systemctl reboot")
         elif self.choice == "shutdown":
-            os.system("systemctl poweroff")
+            os.system("sudo /bin/systemctl poweroff")
         time.sleep(10)
     
 """
