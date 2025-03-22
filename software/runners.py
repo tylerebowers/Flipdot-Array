@@ -23,7 +23,6 @@ class Clock:
             print("Invalid start or stop hour")
             self.start_hour = -1
             self.stop_hour = 25
-        print(self.start_hour, self.stop_hour)
         self.shown_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
     
     def update(self):
@@ -161,6 +160,17 @@ class Weather:
 
     def __str__(self):
         return "Weather"
+    
+class Shutdown:
+    def __init__(self, d, params={}):
+        self.d = d
+        self.d.all_off()
+        self.d.write_display(libraries.screens["shutdown"], bitwise=True)
+
+    def update(self):
+        import os
+        os.system("systemctl poweroff")
+        time.sleep(10)
     
 """
 class Animator:

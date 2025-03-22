@@ -32,7 +32,7 @@
             border-bottom: none;
         }
         button {
-            background-color: #1121af;
+            background-color: #0d00c9;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -41,7 +41,13 @@
             margin-top: 5px;
         }
         button:hover {
-            background-color: rgba(13, 46, 99, 0.714);
+            background-color: #00035f;
+        }
+        .danger {
+            background-color: red;
+        }
+        .danger:hover {
+            background-color: #950000;
         }
         select, input[type="text"] {
             padding: 6px;
@@ -145,6 +151,11 @@
         <div class="section">
             <strong>Off</strong> <br>
             <button onclick="change_mode('Off', {})">Set Mode</button>
+        </div>
+
+        <div class="section">
+            <strong>Shutdown</strong> <br>
+            <button class="danger" onclick="change_mode('Shutdown', {})">Set Mode</button>
         </div>
     </div>
 </body>

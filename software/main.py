@@ -59,6 +59,7 @@ if __name__ == "__main__":
         "Scrolling Text": runners.ScrollingText,
         "Date": runners.Date,
         "Weather": runners.Weather,
+        "Shutdown": runners.Shutdown
     }
     new_mode = {"mode":"Clock", "params":{}}  
     
