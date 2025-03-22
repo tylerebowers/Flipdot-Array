@@ -10,6 +10,8 @@ sudo systemctl enable NetworkManager.service
 sudo apt install screen python3-numpy python3-uvicorn python3-fastapi python3-requests git -y
 git clone https://github.com/tylerebowers/Flipdot-Array
 cd Flipdot-Array/software/
+#git fetch --all
+#git reset --hard origin/main
 
 #edit with sudo nano /etc/systemd/system/flipdots.service
 SERVICE_FILE="/etc/systemd/system/flipdots.service"

@@ -161,15 +161,22 @@ class Weather:
     def __str__(self):
         return "Weather"
     
-class Shutdown:
+class Power:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        self.d.write_display(libraries.screens["shutdown"], bitwise=True)
+        self.choice = params.get("choice", "shutdown")
+        if self.choice == "reboot":
+            self.d.write_display(libraries.screens["reboot"], bitwise=True)
+        elif self.choice == "shutdown":
+            self.d.write_display(libraries.screens["shutdown"], bitwise=True)
 
     def update(self):
         import os
-        os.system("systemctl poweroff")
+        if self.choice == "reboot":
+            os.system("systemctl reboot")
+        elif self.choice == "shutdown":
+            os.system("systemctl poweroff")
         time.sleep(10)
     
 """
