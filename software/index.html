@@ -71,9 +71,41 @@
     <h1>Control Flipdot Display</h1>
     <div class="container">
         <div class="section">
-            <strong>Clock</strong>
+            <strong>Clock</strong> <br>
+            <br>
+            Active hours (if using select from both): <br>
+            Start at: <select id="clock-start">
+                <option value="">--</option>
+                <option value=1>01:00</option>
+                <option value=2>02:00</option>
+                <option value=3>03:00</option>
+                <option value=4>04:00</option>
+                <option value=5>05:00</option>
+                <option value=6>06:00</option>
+                <option value=7>07:00</option>
+                <option value=8>08:00</option>
+                <option value=9>09:00</option>
+                <option value=10>10:00</option>
+                <option value=11>11:00</option>
+                <option value=12>12:00</option>
+            </select>
+            Stop at: <select id="clock-stop">
+                <option value="">--</option>
+                <option value=13>13:00</option>
+                <option value=14>14:00</option>
+                <option value=15>15:00</option>
+                <option value=16>16:00</option>
+                <option value=17>17:00</option>
+                <option value=18>18:00</option>
+                <option value=19>19:00</option>
+                <option value=20>20:00</option>
+                <option value=21>21:00</option>
+                <option value=22>22:00</option>
+                <option value=23>23:00</option>
+                <option value=24>24:00</option>
+            </select>
             <label><input type="checkbox" id="clock-format"> 24 Hour</label>
-            <button onclick="change_mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked)})">Set Mode</button>
+            <button onclick="change_mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked), start_hour: document.getElementById('clock-start').value, stop_hour: document.getElementById('clock-stop').value})">Set Mode</button>
         </div>
 
         <div class="section">

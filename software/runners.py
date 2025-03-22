@@ -16,17 +16,25 @@ class Clock:
         self.d = d
         self.d.all_off()
         self.hours_24 = bool(params.get("hours_24", False))
+
+        self.start_hour = int(params.get("start_hour", -1) or -1)
+        self.stop_hour = int(params.get("stop_hour", 25) or 25)
+        if self.start_hour > self.stop_hour or self.start_hour > 23 or self.stop_hour < 0:
+            print("Invalid start or stop hour")
+            self.start_hour = -1
+            self.stop_hour = 25
+        print(self.start_hour, self.stop_hour)
         self.shown_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
     
     def update(self):
         now = datetime.datetime.now()
-        if now.minute != self.shown_time.minute:
-            self.shown_time = now
-            self.d.write_display(libraries.numbers_7x4[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)], bitwise=True)
-            self.d.write_display(libraries.numbers_7x4[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5, bitwise=True)
-            self.d.write_display(libraries.ascii_7[":"], start_x=10, bitwise=True)
-            self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12, bitwise=True)
-            self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17, bitwise=True)
+        if now.hour >= self.start_hour and now.hour < self.stop_hour and now.minute != self.shown_time.minute:
+                self.shown_time = now
+                self.d.write_display(libraries.numbers_7x4[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)], bitwise=True)
+                self.d.write_display(libraries.numbers_7x4[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5, bitwise=True)
+                self.d.write_display(libraries.ascii_7[":"], start_x=10, bitwise=True)
+                self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12, bitwise=True)
+                self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17, bitwise=True)
         time.sleep(1)
 
     def __str__(self):

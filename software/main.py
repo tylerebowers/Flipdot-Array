@@ -61,13 +61,14 @@ if __name__ == "__main__":
         "Weather": runners.Weather,
     }
     new_mode = {"mode":"Clock", "params":{}}  
-
-    d = Display()
-    runners.self_test(d)
     
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip = s.getsockname()[0]
+    # If the script crashes here it will be restarted by systemd
+
+    d = Display()
+    runners.self_test(d)
     ip_runner = runners.ScrollingText(d, {"text": ip[[i for i, n in enumerate(ip) if n == '.'][1]:]})
     ip_runner.update()
     del ip_runner
