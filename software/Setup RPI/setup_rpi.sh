@@ -9,4 +9,4 @@ sudo systemctl enable NetworkManager.service
 wget https://github.com/tylerebowers/Flipdot-Array/archive/refs/heads/main.zip
 unzip main.zip
 cd Flipdot-Array-main/software/
-sudo apt install python3-numpy screen -y
+sudo apt install screen python3-numpy python3-uvicorn python3-fastapi python3-requests -y

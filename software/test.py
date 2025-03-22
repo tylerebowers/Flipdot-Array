@@ -3,8 +3,10 @@ import libraries
 import time
 import requests
 import datetime
+import runners
+import socket
 
-
+"""
 class Date:
     def __init__(self, d, params={}):
         self.d = d
@@ -30,3 +32,20 @@ params = {
 runner = Date(d, params)
 while True:
     runner.update()
+"""
+
+"""
+d = Display()
+ip = socket.gethostbyname(socket.gethostname())
+ip_runner = runners.ScrollingText(d, {"text": ip[[i for i, n in enumerate(ip) if n == '.'][1]:]})
+ip_runner.update()
+time.sleep(5)
+"""
+"""
+import socket
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
+print(get_ip_address())"
+"""

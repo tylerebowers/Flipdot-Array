@@ -3,23 +3,13 @@ from interface.display_simulator import Display
 import runners
 import uvicorn
 import threading
+import socket
+import time
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
-d = Display()
-#runners.self_test(d)
-
-identities = {
-    "Clock": runners.Clock,
-    "Game of Life": runners.GameOfLife,
-    "Off": runners.Off,
-    "Scrolling Text": runners.ScrollingText,
-    "Date": runners.Date,
-    "Weather": runners.Weather,
-}
-new_mode = {"mode":"Clock", "params":{}}  
 
 class Runner:
     def __init__(self):
@@ -59,10 +49,30 @@ class WebServer:
         
         
     def run(self):
-        uvicorn.run(self.app, port=8000)
-    
+        uvicorn.run(self.app, host=ip, port=8000)
 
 if __name__ == "__main__":
+    identities = {
+        "Clock": runners.Clock,
+        "Game of Life": runners.GameOfLife,
+        "Off": runners.Off,
+        "Scrolling Text": runners.ScrollingText,
+        "Date": runners.Date,
+        "Weather": runners.Weather,
+    }
+    new_mode = {"mode":"Clock", "params":{}}  
+
+    d = Display()
+    runners.self_test(d)
+    
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    ip_runner = runners.ScrollingText(d, {"text": ip[[i for i, n in enumerate(ip) if n == '.'][1]:]})
+    ip_runner.update()
+    del ip_runner
+    time.sleep(2)
+
     server = WebServer()
     runner = Runner()
     threading.Thread(target=server.run).start()
