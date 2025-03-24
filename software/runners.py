@@ -29,13 +29,13 @@ class Clock:
         now = datetime.datetime.now()
         if now.hour >= self.start_hour and now.hour < self.stop_hour and now.minute != self.shown_time.minute:
                 self.shown_time = now
-                self.d.write_display(libraries.numbers_7x4[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)], bitwise=True)
-                self.d.write_display(libraries.numbers_7x4[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5, bitwise=True)
-                self.d.write_display(libraries.ascii_7[":"], start_x=10, bitwise=True)
-                self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12, bitwise=True)
-                self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17, bitwise=True)
+                self.d.write_display(libraries.numbers_7x4[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)])
+                self.d.write_display(libraries.numbers_7x4[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5)
+                self.d.write_display(libraries.ascii_7[":"], start_x=10)
+                self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12)
+                self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17)
         elif now.minute != self.shown_time.minute:
-            self.d.write_display(libraries.screens["sleep"], bitwise=True)
+            self.d.write_display(libraries.screens["sleep"])
         time.sleep(1)
 
     def __str__(self):
@@ -45,7 +45,7 @@ class GameOfLife:
     def __init__(self, d, params={}):
         self.d = d
         self.sleep_time = 1 / int(params.get('fps', 2) or 2)
-        self.d.write_display(np.random.randint(2,size=(21,7),))
+        self.d.write_display_boolarray(np.random.randint(2,size=(21,7),))
 
     def _count_neighbors(self, x, y):
         total = 0
@@ -97,9 +97,9 @@ class ScrollingText:
 
     def update(self):
         if self.single_length <=21:
-            self.d.write_display(self.display_single, bitwise=True)
+            self.d.write_display(self.display_single)
         else:
-            self.d.write_display(self.display_loopable[self.x:self.x+21], bitwise=True)
+            self.d.write_display(self.display_loopable[self.x:self.x+21])
             self.x = (self.x + 1) % self.loopable_length
         time.sleep(self.sleep_time)
 
@@ -117,7 +117,7 @@ class Date:
         if now.day != self.shown_date.day:
             self.shown_date = now
             date_display = [a for tup in (libraries.ascii_7[l] + [0] for l in now.strftime("%b%d")) for a in tup][:-1]
-            self.d.write_display(date_display, bitwise=True)
+            self.d.write_display(date_display)
         time.sleep(5)
 
     def __str__(self):
@@ -151,12 +151,12 @@ class Weather:
                 print(e)
                 return
             self.last_update = now # we dont want to spam api if it is down
-            self.d.write_display(libraries.weather.get(code, []), start_x=0, bitwise=True)
+            self.d.write_display(libraries.weather.get(code, []), start_x=0)
             if not self.use_celsius:
                 temp = (temp * 1.8) + 32
-            self.d.write_display(libraries.numbers_7x3[int(temp/10)], start_x=8, bitwise=True)
-            self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=12, bitwise=True)
-            self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16, bitwise=True)
+            self.d.write_display(libraries.numbers_7x3[int(temp/10)], start_x=8)
+            self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=12)
+            self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16)
 
         time.sleep(1)
 
@@ -169,9 +169,9 @@ class Power:
         self.d.all_off()
         self.choice = params.get("choice", "shutdown")
         if self.choice == "reboot":
-            self.d.write_display(libraries.screens["reboot"], bitwise=True)
+            self.d.write_display(libraries.screens["reboot"])
         elif self.choice == "shutdown":
-            self.d.write_display(libraries.screens["shutdown"], bitwise=True)
+            self.d.write_display(libraries.screens["shutdown"])
 
     def update(self):
         import os

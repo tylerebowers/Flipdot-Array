@@ -7,9 +7,9 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install comitup -y
 sudo systemctl enable NetworkManager.service
-sudo apt install screen python3-numpy python3-uvicorn python3-fastapi python3-requests python3-pybind11 wiringpi git -y
-wget https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_armhf.deb
-sudo apt install ./wiringpi_3.14_armhf.deb
+sudo apt install screen python3-numpy python3-uvicorn python3-fastapi python3-requests python3-pybind11 wiringpi git python3-dev -y
+wget https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_arm64.deb
+sudo apt install ./wiringpi_3.14_arm64.deb -y
 git clone https://github.com/tylerebowers/Flipdot-Array
 cd Flipdot-Array/software/
 #git fetch --all
