@@ -18,6 +18,12 @@ class Display:
         elif not state and self.shown[x][y]:
             self.shown[x][y] = False
 
+    def check_shown(self, x, y):
+        return self.shown[x][y]
+    
+    def get_shown(self):
+        pass #uninplemented
+
     def all_off(self):
         for y in range(7):
             for x in range(21):
@@ -28,16 +34,24 @@ class Display:
             for x in range(21):
                 self.write_dot(x, y, True)
 
-    def write_display(self, new_display, start_x=0, start_y=0, delay=0, bitwise=False):
-        for x in range(start_x, min(21, len(new_display)+start_x)):
-            if bitwise:
-                for y in range(start_y, 7):
-                    time.sleep(delay)
-                    self.write_dot(x, y, new_display[x-start_x] & (1 << y))
-            else:
-                for y in range(start_y, min(7, len(new_display[x-start_x])+start_y)):
-                    time.sleep(delay)
-                    self.write_dot(x, y, new_display[x-start_x][y-start_y])
+    def write_display(self, new_display, start_x=0, start_y=0, delay=0, force=False, horizontal="WE", vertical="NS", direction="LR"):
+        x_range = range(start_x, min(21, len(new_display) + start_x)) if direction == "LR" else range(min(20, len(new_display) + start_x), start_x-1,-1)
+        y_range = range(start_y, 7) if direction == "TB" else range(6, start_y-1,-1)
+        for x in x_range:
+            for y in range(start_y, 7):
+                time.sleep(delay)
+                self.write_dot(x, y, bool(new_display[x - start_x] & (1 << y)), force) 
+        self._disable()
+        self._clear()
+    
+    def write_display_boolarray(self, new_display, start_x=0, start_y=0, delay=0, force=False, horizontal="WE", vertical="NS", direction="LR"):
+        new_display_int = []
+        for x in new_display:
+            new_display_int.append(0)
+            for y in x:
+                new_display_int[-1] = new_display_int[-1] | (1 << y)
+        self.write_display(new_display_int, start_x, start_y, delay, force, horizontal, vertical, direction)
+
 
 class _Display_Simulator(tk.Frame):
     def __init__(self, scale=60):

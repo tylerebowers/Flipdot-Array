@@ -34,6 +34,8 @@ class Clock:
                 self.d.write_display(libraries.ascii_7[":"], start_x=10, bitwise=True)
                 self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12, bitwise=True)
                 self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17, bitwise=True)
+        elif now.minute != self.shown_time.minute:
+            self.d.write_display(libraries.screens["sleep"], bitwise=True)
         time.sleep(1)
 
     def __str__(self):
@@ -49,16 +51,16 @@ class GameOfLife:
         total = 0
         for i in range(x - 1, x + 2):
             for j in range(y - 1, y + 2):
-                if (i == x and j == y) or i < 0 or j < 0 or i >= self.d.shown.shape[0] or j >= self.d.shown.shape[1]:
+                if (i == x and j == y) or i < 0 or j < 0 or i > 21 or j > 7:
                     continue
-                total += self.d.shown[i][j]
+                total += self.d.check_shown(i, j)
         return total
 
     def update(self):
-        for x in range(self.d.shown.shape[0]):
-            for y in range(self.d.shown.shape[1]):
+        for x in range(21):
+            for y in range(7):
                 neighbors = self._count_neighbors(x, y)
-                if self.d.shown[x][y] == 1:
+                if self.d.check_shown(x, y):
                     if neighbors < 2 or neighbors > 3:
                         self.d.write_dot(x, y, False)
                 else:

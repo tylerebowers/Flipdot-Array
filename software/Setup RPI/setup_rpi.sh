@@ -7,7 +7,9 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install comitup -y
 sudo systemctl enable NetworkManager.service
-sudo apt install screen python3-numpy python3-uvicorn python3-fastapi python3-requests git -y
+sudo apt install screen python3-numpy python3-uvicorn python3-fastapi python3-requests python3-pybind11 wiringpi git -y
+wget https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_armhf.deb
+sudo apt install ./wiringpi_3.14_armhf.deb
 git clone https://github.com/tylerebowers/Flipdot-Array
 cd Flipdot-Array/software/
 #git fetch --all
@@ -22,7 +24,7 @@ Description=Startup flipdots controller script service
 After=network.target
 
 [Service]
-User=$USER
+User=root ; since we need port 80 to access from flipdots.local
 WorkingDirectory=/home/$USER/Flipdot-Array/software/
 ExecStart=/usr/bin/screen -S flipdots-service -dm /usr/bin/python3 main.py
 Restart=always

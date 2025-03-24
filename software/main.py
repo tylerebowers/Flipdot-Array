@@ -1,5 +1,5 @@
-from interface.display_simulator import Display
-#from interface.display import Display
+#from interface.display_simulator import Display
+from interface.display import Display
 import runners
 import uvicorn
 import threading
@@ -49,7 +49,7 @@ class WebServer:
         
         
     def run(self):
-        uvicorn.run(self.app, host=ip, port=8000)
+        uvicorn.run(self.app, host=ip, port=80)
 
 if __name__ == "__main__":
     identities = {
