@@ -201,6 +201,10 @@ public:
 PYBIND11_MODULE(display, m) {
     pybind11::class_<Display>(m, "Display")
     .def(pybind11::init<>())  // Bind constructor
+    .def_readwrite("delay", &Display::delay)
+    .def_readwrite("horizontal", &Display::horizontal)
+    .def_readwrite("vertical", &Display::vertical)
+    .def_readwrite("order", &Display::order)
     .def("write_dot", [](Display &self, 
                          int x, 
                          int y, 
