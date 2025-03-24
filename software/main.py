@@ -11,6 +11,7 @@ from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
+PORT = 80
 
 class Runner:
     def __init__(self):
@@ -55,7 +56,7 @@ class WebServer:
             utils.set_settings(d, r)
         
     def run(self):
-        uvicorn.run(self.app, host=ip, port=80)
+        uvicorn.run(self.app, host=ip, port=PORT)
 
 if __name__ == "__main__":
     identities = {

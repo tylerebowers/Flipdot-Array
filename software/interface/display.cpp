@@ -31,7 +31,7 @@ private:
     vector<uint32_t> shown = vector<uint32_t>(21, 0); 
 
 public:
-    uint32_t delay = 10;
+    uint32_t delay = 100;
     string horizontal = "WE";
     string vertical = "NS";
     string order = "XY";
@@ -165,14 +165,14 @@ public:
         if (order == "XY") {
             for (int x : x_range) {
                 for (int y : y_range) {
-                    this_thread::sleep_for(chrono::milliseconds(delay));
+                    this_thread::sleep_for(chrono::microseconds(delay));
                     write_dot(x, y, new_display[x - start_x] & (1ULL << y), force);
                 }
             }
         } else if (order == "YX") {
             for (int y : y_range) {
                 for (int x : x_range) {
-                    this_thread::sleep_for(chrono::milliseconds(delay));
+                    this_thread::sleep_for(chrono::microseconds(delay));
                     write_dot(x, y, new_display[x - start_x] & (1ULL << y), force);
                 }
             }
