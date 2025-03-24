@@ -140,7 +140,6 @@ public:
 
 
     void write_display(vector<int> new_display, int start_x = 0, int start_y = 0, bool force = false) {
-        printf("settings : %d %s %s %s\n", delay, horizontal.c_str(), vertical.c_str(), order.c_str());
         vector<int> x_range;
         if (horizontal == "WE") { // West to East
             for (int i = start_x; i < min(21, (int)new_display.size() + start_x); i++) {

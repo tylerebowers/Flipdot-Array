@@ -52,7 +52,7 @@ class WebServer:
         async def set_settings(request: Request):
             r = await request.json()
             print("Received:", r)
-            utils.set_settings(r)
+            utils.set_settings(d, r)
         
     def run(self):
         uvicorn.run(self.app, host=ip, port=80)
