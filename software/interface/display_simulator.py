@@ -8,7 +8,7 @@ class Display:
         self.shown = np.zeros((21,7),dtype=np.bool_)
         self._simulator = _Display_Simulator(scale)
 
-    def write_dot(self, x, y, state):
+    def write_dot(self, x, y, state, force=False):
         if not (0 <= x < 21 and 0 <= y < 7):
             return
 
@@ -17,6 +17,12 @@ class Display:
             self.shown[x][y] = True
         elif not state and self.shown[x][y]:
             self.shown[x][y] = False
+
+    def _disable(self):
+        pass
+
+    def _clear(self):
+        pass
 
     def check_shown(self, x, y):
         return self.shown[x][y]

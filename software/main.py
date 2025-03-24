@@ -1,10 +1,11 @@
-#from interface.display_simulator import Display
-from interface.display import Display
+from interface.display_simulator import Display
+#from interface.display import Display
 import runners
 import uvicorn
 import threading
 import socket
 import time
+import utils
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
@@ -47,9 +48,14 @@ class WebServer:
             print("Received: ", new_mode)
             return templates.TemplateResponse("index.html", {"request": request, "display_mode": new_mode.get("mode", None)})
         
+        @self.app.post("/settings", response_class=HTMLResponse)
+        async def set_settings(request: Request):
+            r = await request.json()
+            print("Received:", r)
+            utils.set_settings(r)
         
     def run(self):
-        uvicorn.run(self.app, host=ip, port=80)
+        uvicorn.run(self.app, host=ip, port=8000)
 
 if __name__ == "__main__":
     identities = {

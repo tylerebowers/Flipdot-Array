@@ -31,6 +31,11 @@ private:
     vector<uint32_t> shown = vector<uint32_t>(21, 0); 
 
 public:
+    uint32_t delay = 10;
+    string horizontal = "WE";
+    string vertical = "NS";
+    string order = "XY";
+
     Display() {
         wiringPiSetupGpio();  
 
@@ -134,7 +139,7 @@ public:
     }
 
 
-    void write_display(vector<int> new_display, int start_x = 0, int start_y = 0, int delay = 0, bool force = false, string horizontal = "WE", string vertical = "NS", string order = "XY") {
+    void write_display(vector<int> new_display, int start_x = 0, int start_y = 0, bool force = false) {
         vector<int> x_range;
         if (horizontal == "WE") { // West to East
             for (int i = start_x; i < min(21, (int)new_display.size() + start_x); i++) {
@@ -160,14 +165,14 @@ public:
         if (order == "XY") {
             for (int x : x_range) {
                 for (int y : y_range) {
-                    this_thread::sleep_for(chrono::milliseconds(delay));
+                    this_thread::sleep_for(chrono::microseconds(delay));
                     write_dot(x, y, new_display[x - start_x] & (1ULL << y), force);
                 }
             }
         } else if (order == "YX") {
             for (int y : y_range) {
                 for (int x : x_range) {
-                    this_thread::sleep_for(chrono::milliseconds(delay));
+                    this_thread::sleep_for(chrono::microseconds(delay));
                     write_dot(x, y, new_display[x - start_x] & (1ULL << y), force);
                 }
             }
@@ -176,7 +181,7 @@ public:
         _clear();
     }
 
-    void write_display_boolarray(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, int delay = 0, bool force = false, string horizontal = "WE", string vertical = "NS", string order = "XY") {
+    void write_display_boolarray(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, bool force = false) {
         vector<int> new_display_int;
         for (uint64_t x = 0; x < new_display.size(); x++) {
             int column = 0;
@@ -187,7 +192,7 @@ public:
             }
             new_display_int.push_back(column);
         }
-        write_display(new_display_int, start_x, start_y, delay, force, horizontal, vertical, order);
+        write_display(new_display_int, start_x, start_y, force);
     }
 
 };
@@ -225,13 +230,9 @@ PYBIND11_MODULE(display, m) {
                              vector<int> new_display, 
                              int start_x = 0, 
                              int start_y = 0, 
-                             int delay = 0, 
-                             bool force = false, 
-                             string horizontal = "WE", 
-                             string vertical = "NS", 
-                             string order = "XY") {
+                             bool force = false) {
         try {
-            self.write_display(new_display, start_x, start_y, delay, force, horizontal, vertical, order);
+            self.write_display(new_display, start_x, start_y, force);
         } catch (...) {
             self._disable();
             self._clear();
@@ -241,22 +242,14 @@ PYBIND11_MODULE(display, m) {
         pybind11::arg("new_display"),
         pybind11::arg("start_x") = 0,
         pybind11::arg("start_y") = 0,
-        pybind11::arg("delay") = 0,
-        pybind11::arg("force") = false,
-        pybind11::arg("horizontal") = "WE",
-        pybind11::arg("vertical") = "NS",
-        pybind11::arg("order") = "XY")
+        pybind11::arg("force") = false)
     .def("write_display_boolarray", [](Display &self, 
                                        vector<vector<bool>> new_display, 
                                        int start_x = 0, 
                                        int start_y = 0, 
-                                       int delay = 0, 
-                                       bool force = false, 
-                                       string horizontal = "WE", 
-                                       string vertical = "NS", 
-                                       string order = "XY") {
+                                       bool force = false) {
         try {
-            self.write_display_boolarray(new_display, start_x, start_y, delay, force, horizontal, vertical, order);
+            self.write_display_boolarray(new_display, start_x, start_y, force);
         } catch (...) {
             self._disable();
             self._clear();
@@ -266,11 +259,7 @@ PYBIND11_MODULE(display, m) {
         pybind11::arg("new_display"),
         pybind11::arg("start_x") = 0,
         pybind11::arg("start_y") = 0,
-        pybind11::arg("delay") = 0,
-        pybind11::arg("force") = false,
-        pybind11::arg("horizontal") = "WE",
-        pybind11::arg("vertical") = "NS",
-        pybind11::arg("order") = "XY");
+        pybind11::arg("force") = false);
 }
 
 /*
