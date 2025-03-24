@@ -122,6 +122,7 @@ public:
         for (int y = 0; y < 7; y++) {
             for (int x = 0; x < 21; x++) {
                 write_dot(x, y, false, force);
+                this_thread::sleep_for(chrono::microseconds(delay));
             }
         }
         _disable();
@@ -132,6 +133,7 @@ public:
         for (int y = 0; y < 7; y++) {
             for (int x = 0; x < 21; x++) {
                 write_dot(x, y, true, force);
+                this_thread::sleep_for(chrono::microseconds(delay));
             }
         }
         _disable();
@@ -146,7 +148,7 @@ public:
                 x_range.push_back(i);
             }
         } else { // East to West
-            for (int i = min(20, (int)new_display.size() + start_x); i >= start_x; i--) {
+            for (int i = min(20, (int)new_display.size() + start_x-1); i >= start_x; i--) {
                 x_range.push_back(i);
             }
         }
@@ -181,7 +183,7 @@ public:
         _clear();
     }
 
-    void write_display_boolarray(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, bool force = false) {
+    void write_display_bool(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, bool force = false) {
         vector<int> new_display_int;
         for (uint64_t x = 0; x < new_display.size(); x++) {
             int column = 0;
@@ -247,13 +249,13 @@ PYBIND11_MODULE(display, m) {
         pybind11::arg("start_x") = 0,
         pybind11::arg("start_y") = 0,
         pybind11::arg("force") = false)
-    .def("write_display_boolarray", [](Display &self, 
+    .def("write_display_bool", [](Display &self, 
                                        vector<vector<bool>> new_display, 
                                        int start_x = 0, 
                                        int start_y = 0, 
                                        bool force = false) {
         try {
-            self.write_display_boolarray(new_display, start_x, start_y, force);
+            self.write_display_bool(new_display, start_x, start_y, force);
         } catch (...) {
             self._disable();
             self._clear();

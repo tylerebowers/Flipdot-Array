@@ -40,7 +40,7 @@ class GameOfLife:
     def __init__(self, d, params={}):
         self.d = d
         self.sleep_time = 1 / int(params.get('fps', 2) or 2)
-        self.d.write_display_boolarray(np.random.randint(2,size=(21,7),))
+        self.d.write_display_bool(np.random.randint(2,size=(21,7),))
 
     def _count_neighbors(self, x, y):
         total = 0

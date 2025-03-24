@@ -1,5 +1,5 @@
-from interface.display_simulator import Display
-#from interface.display import Display
+#from interface.display_simulator import Display
+from interface.display import Display
 import runners
 import uvicorn
 import threading
@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
-PORT = 80
+PORT = 8000
 
 class Runner:
     def __init__(self):
