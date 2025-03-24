@@ -55,7 +55,7 @@ class WebServer:
             utils.set_settings(r)
         
     def run(self):
-        uvicorn.run(self.app, host=ip, port=8000)
+        uvicorn.run(self.app, host=ip, port=80)
 
 if __name__ == "__main__":
     identities = {
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # If the script crashes here it will be restarted by systemd
 
     d = Display()
-    runners.self_test(d)
+    utils.self_test(d)
     ip_runner = runners.ScrollingText(d, {"text": ip[[i for i, n in enumerate(ip) if n == '.'][1]:]})
     ip_runner.update()
     del ip_runner

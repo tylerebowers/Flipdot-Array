@@ -113,7 +113,7 @@ public:
             digitalWrite(_ser, LOW);
 
             _enable();
-            this_thread::sleep_for(chrono::microseconds(200));
+            this_thread::sleep_for(chrono::microseconds(100));
             _disable();
         }
     }
@@ -140,6 +140,7 @@ public:
 
 
     void write_display(vector<int> new_display, int start_x = 0, int start_y = 0, bool force = false) {
+        printf("settings : %d %s %s %s\n", delay, horizontal.c_str(), vertical.c_str(), order.c_str());
         vector<int> x_range;
         if (horizontal == "WE") { // West to East
             for (int i = start_x; i < min(21, (int)new_display.size() + start_x); i++) {
@@ -165,14 +166,14 @@ public:
         if (order == "XY") {
             for (int x : x_range) {
                 for (int y : y_range) {
-                    this_thread::sleep_for(chrono::microseconds(delay));
+                    this_thread::sleep_for(chrono::milliseconds(delay));
                     write_dot(x, y, new_display[x - start_x] & (1ULL << y), force);
                 }
             }
         } else if (order == "YX") {
             for (int y : y_range) {
                 for (int x : x_range) {
-                    this_thread::sleep_for(chrono::microseconds(delay));
+                    this_thread::sleep_for(chrono::milliseconds(delay));
                     write_dot(x, y, new_display[x - start_x] & (1ULL << y), force);
                 }
             }
