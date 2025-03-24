@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
-PORT = 8000
+PORT = 80
 
 class Runner:
     def __init__(self):
