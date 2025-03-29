@@ -1,17 +1,21 @@
-#from interface.display_simulator import Display
-from interface.display import Display
 import runners
 import uvicorn
 import threading
 import socket
 import time
 import utils
+import platform
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
-PORT = 80
+if "rpi" in platform.system():
+    from interface.display import Display
+    PORT = 80
+else:
+    from interface.display_simulator import Display
+    PORT = 8000
 
 class Runner:
     def __init__(self):

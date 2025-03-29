@@ -83,27 +83,15 @@
             Active hours (if using select from both): <br>
             Start at: <select id="clock-start">
                 <option value="">--</option>
-                <option value=1>01:00</option>
-                <option value=2>02:00</option>
-                <option value=3>03:00</option>
-                <option value=4>04:00</option>
                 <option value=5>05:00</option>
                 <option value=6>06:00</option>
                 <option value=7>07:00</option>
                 <option value=8>08:00</option>
                 <option value=9>09:00</option>
                 <option value=10>10:00</option>
-                <option value=11>11:00</option>
-                <option value=12>12:00</option>
             </select>
             Stop at: <select id="clock-stop">
                 <option value="">--</option>
-                <option value=13>13:00</option>
-                <option value=14>14:00</option>
-                <option value=15>15:00</option>
-                <option value=16>16:00</option>
-                <option value=17>17:00</option>
-                <option value=18>18:00</option>
                 <option value=19>19:00</option>
                 <option value=20>20:00</option>
                 <option value=21>21:00</option>
@@ -117,25 +105,27 @@
 
         <div class="section">
             <strong>Game of Life</strong>
-            <label>FPS: <select id="game-of-life-fps">
-                <option value=2>2</option>
-                <option value=1>1</option>
-                <option value=4>4</option>
-                <option value=8>8</option>
+            <label>TBF: <select id="game-of-life-tbf">
+                <option value=0.1>100ms</option>
+                <option value=0.25>250ms</option>
+                <option value=0.5 selected>500ms</option>
+                <option value=1>1s</option>
+                <option value=2>2s</option>
             </select></label>
-            <button onclick="change_mode('Game of Life', {fps: document.getElementById('game-of-life-fps').value})">Set Mode</button>
+            <button onclick="change_mode('Game of Life', {tbf: document.getElementById('game-of-life-tbf').value})">Set Mode</button>
         </div>
 
         <div class="section">
             <strong>Scrolling Text</strong>
-            <label>Text: <input id="scrolling-text-text" value="text"></label>
-            <label>FPS: <select id="scrolling-text-fps">
-                <option value=2>2</option>
-                <option value=1>1</option>
-                <option value=4>4</option>
-                <option value=8>8</option>
+            <label>Text: <input id="scrolling-text-text" value="Hello World"></label>
+            <label>TBF: <select id="scrolling-text-tbf">
+                <option value=0.1>100ms</option>
+                <option value=0.25>250ms</option>
+                <option value=0.5>500ms</option>
+                <option value=1 selected>1s</option>
+                <option value=2>2s</option>
             </select></label>
-            <button onclick="change_mode('Scrolling Text', {fps: document.getElementById('scrolling-text-fps').value, text: document.getElementById('scrolling-text-text').value})">Set Mode</button>
+            <button onclick="change_mode('Scrolling Text', {tbf: document.getElementById('scrolling-text-tbf').value, text: document.getElementById('scrolling-text-text').value})">Set Mode</button>
         </div>
 
         <div class="section">

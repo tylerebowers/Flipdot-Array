@@ -29,7 +29,7 @@ class Clock:
                 self.d.write_display(libraries.ascii_7[":"], start_x=10)
                 self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12)
                 self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17)
-        elif now.minute != self.shown_time.minute:
+        elif now.hour != self.shown_time.hour:
             self.d.write_display(libraries.screens["sleep"])
         time.sleep(1)
 
@@ -39,8 +39,8 @@ class Clock:
 class GameOfLife:
     def __init__(self, d, params={}):
         self.d = d
-        self.sleep_time = 1 / int(params.get('fps', 2) or 2)
-        self.d.write_display_bool(np.random.randint(2,size=(21,7),))
+        self.sleep_time = float(params.get('tbf', 1) or 1)
+        self.d.write_display(np.packbits(np.random.randint(2,size=(21,7)), axis=1, bitorder='little').flatten())
 
     def _count_neighbors(self, x, y):
         total = 0
@@ -76,26 +76,39 @@ class Off:
     def __str__(self):
         return "Off"
 
+
 class ScrollingText:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        self.text = params.get("text", "")
-        self.sleep_time = 1 / int(params.get('fps', None) or 2)
-        self.gap = int(params.get('gap', None) or 6) #gap between loops
-        self.x = 0
-        self.display_single = [a for tup in (libraries.ascii_7[l] + [0] for l in self.text) for a in tup][:-1]
-        self.single_length = len(self.display_single)
-        self.display_loopable =  self.display_single + ([0] * self.gap) + self.display_single
-        self.loopable_length = len(self.display_single) + self.gap
+        self.text = params.get("text", "") + "   "
+        self.static = True if (sum([len(libraries.ascii_7[l]) for l in self.text]) + len(self.text)) <= 22 else False
+        self.sleep_time = float(params.get('tbf', 1) or 1)
+        self.l = 0
+        if self.static:
+            start_x_offset = 0
+            for l in self.text:
+                letter = libraries.ascii_7[l]
+                self.d.write_display(letter, start_x=start_x_offset)
+                start_x_offset += len(letter)
+                self.d.write_display([0], start_x=start_x_offset)
+                start_x_offset += 1
 
 
     def update(self):
-        if self.single_length <=21:
-            self.d.write_display(self.display_single)
-        else:
-            self.d.write_display(self.display_loopable[self.x:self.x+21])
-            self.x = (self.x + 1) % self.loopable_length
+        if not self.static:
+            start_x_offset = 0
+            current_l = self.l
+            while start_x_offset < 21:
+                letter = libraries.ascii_7[self.text[current_l]]
+                self.d.write_display(letter, start_x=start_x_offset)
+                start_x_offset += len(letter)
+                self.d.write_display([0], start_x=start_x_offset)
+                start_x_offset += 1
+                if start_x_offset >= 21:
+                    break
+                current_l  = (current_l + 1) % len(self.text)
+            self.l = (self.l + 1) % len(self.text)
         time.sleep(self.sleep_time)
 
     def __str__(self):
@@ -182,7 +195,7 @@ class Animator:
         self.d.all_off()
         self.keyframes = params.get("keyframes", [])
         self.bitwise = params.get("bitwise", True)
-        self.sleep_time = 1 / int(params.get('fps', 2) or 2)
+        self.sleep_time = float(params.get('tbf', 1) or 1)
         self.frame = 0
 
     def update(self):

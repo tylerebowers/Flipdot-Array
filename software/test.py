@@ -1,5 +1,5 @@
-#from interface.display_simulator import Display
-from interface.display import Display
+from interface.display_simulator import Display
+#from interface.display import Display
 #from interface.display_python import Display as DisplayP
 import libraries
 import time
@@ -9,29 +9,49 @@ import runners
 import socket
 
 """
-class Date:
+class ScrollingText:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        self.shown_date = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.text = params.get("text", "") + "   "
+        self.static = True if (sum([len(libraries.ascii_7[l]) for l in self.text]) + len(self.text)) <= 22 else False
+        self.sleep_time = params.get('tbf', 1)
+        self.l = 0
+        if self.static:
+            start_x_offset = 0
+            for l in self.text:
+                letter = libraries.ascii_7[l]
+                self.d.write_display(letter, start_x=start_x_offset)
+                start_x_offset += len(letter)
+                self.d.write_display([0], start_x=start_x_offset)
+                start_x_offset += 1
+
 
     def update(self):
-        now = datetime.datetime.now()
-        if now.day != self.shown_date.day:
-            self.shown_date = now
-            date_display = [a for tup in (libraries.ascii_7[l] + [0] for l in now.strftime("%b%d")) for a in tup][:-1]
-            self.d.write_display(date_display, bitwise=True)
-        time.sleep(5)
+        if not self.static:
+            start_x_offset = 0
+            current_l = self.l
+            while start_x_offset < 21:
+                letter = libraries.ascii_7[self.text[current_l]]
+                self.d.write_display(letter, start_x=start_x_offset)
+                start_x_offset += len(letter)
+                self.d.write_display([0], start_x=start_x_offset)
+                start_x_offset += 1
+                if start_x_offset >= 21:
+                    break
+                current_l  = (current_l + 1) % len(self.text)
+            self.l = (self.l + 1) % len(self.text)
+        time.sleep(self.sleep_time)
 
     def __str__(self):
-        return "Date"
+        return "Scrolling Text"
 
 
 d = Display()
 params = {
-    "use_celsius": False
+    "text": "A super long text box to test scrolling text",
 }
-runner = Date(d, params)
+runner = ScrollingText(d, params)
 while True:
     runner.update()
 """
@@ -77,12 +97,12 @@ direction = "RL"
 x_range = range(start_x, min(21, len(new_display) + start_x)) if direction == "LR" else range(min(20, len(new_display) + start_x), start_x-1,-1)
 print(list(x_range))
 """
-
+"""
 d = Display()
 d.all_on()
 print(d.get_shown())
 print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
+"""
 """
 d.all_on()
 d.all_off()

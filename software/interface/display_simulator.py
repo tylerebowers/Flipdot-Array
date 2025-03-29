@@ -25,7 +25,10 @@ class Display:
         pass
 
     def check_shown(self, x, y):
-        return self.shown[x][y]
+        if not (0 <= x < 21 and 0 <= y < 7):
+            return False
+        else:
+            return self.shown[x][y]
     
     def get_shown(self):
         pass #uninplemented
@@ -40,23 +43,24 @@ class Display:
             for x in range(21):
                 self.write_dot(x, y, True)
 
-    def write_display(self, new_display, start_x=0, start_y=0, delay=0, force=False, horizontal="WE", vertical="NS", direction="LR"):
-        x_range = range(start_x, min(21, len(new_display) + start_x)) if direction == "LR" else range(min(20, len(new_display) + start_x), start_x-1,-1)
-        y_range = range(start_y, 7) if direction == "TB" else range(6, start_y-1,-1)
-        for x in x_range:
+    def write_display(self, new_display, start_x=0, start_y=0, force=False, ):
+        #x_range = range(start_x, min(21, len(new_display) + start_x)) if direction == "LR" else range(min(20, len(new_display) + start_x), start_x-1,-1)
+        #y_range = range(start_y, 7) if direction == "TB" else range(6, start_y-1,-1)
+        for x in range(start_x, min(21, len(new_display) + start_x)):
             for y in range(start_y, 7):
-                time.sleep(delay)
+                #time.sleep(delay)
                 self.write_dot(x, y, bool(new_display[x - start_x] & (1 << y)), force) 
         self._disable()
         self._clear()
     
-    def write_display_boolarray(self, new_display, start_x=0, start_y=0, delay=0, force=False, horizontal="WE", vertical="NS", direction="LR"):
+    def write_display_grid(self, new_display, start_x=0, start_y=0, force=False):
         new_display_int = []
+        print(new_display)
         for x in new_display:
             new_display_int.append(0)
-            for y in x:
-                new_display_int[-1] = new_display_int[-1] | (1 << y)
-        self.write_display(new_display_int, start_x, start_y, delay, force, horizontal, vertical, direction)
+            for y in range(min(7, len(new_display[x]))):
+                new_display_int[-1] |= (bool(new_display[x][y]) << y)
+        self.write_display(new_display_int, start_x, start_y, force)
 
 
 class _Display_Simulator(tk.Frame):

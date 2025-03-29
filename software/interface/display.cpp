@@ -6,7 +6,7 @@ Edit at your own risk.
 
 This is a C++ based interface for the display.
 
-After changes recompile with:
+After changes recompile (on the rpi) with:
 c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) display.cpp -o display$(python3-config --extension-suffix) -lwiringPi
 */
 
@@ -56,10 +56,12 @@ public:
     }
 
     vector<uint32_t> get_shown() {
+        // Get shown
         return shown;
     }
 
     bool check_shown(int x, int y) {
+        // Check if dot is shown at x, y
         if (!(x >= 0 && x < 21 && y >= 0 && y < 7)){
             return false;
         } else {
@@ -68,20 +70,24 @@ public:
     }
 
     void _disable() {
+        // Disable display
         digitalWrite(_oe, HIGH);
     }
 
     void _enable() {
+        // Enable display
         digitalWrite(_oe, LOW);
     }
 
     void _clear() {
+        // Clear registers
         digitalWrite(_srclr, LOW);
         digitalWrite(_srclr, HIGH);
         digitalWrite(_ser, LOW);
     }
 
     void write_dot(int x, int y, bool state, bool force = false) {
+        // Write dot at x, y with state and don't check shown if force
         _disable();
         _clear();
         if (!(x >= 0 && x < 21 && y >= 0 && y < 7)) return;
@@ -119,6 +125,7 @@ public:
     }
 
     void all_off(bool force = false) {
+        // turn all dots off
         for (int y = 0; y < 7; y++) {
             for (int x = 0; x < 21; x++) {
                 write_dot(x, y, false, force);
@@ -130,6 +137,7 @@ public:
     }
 
     void all_on(bool force = false) {
+        // turn all dots on
         for (int y = 0; y < 7; y++) {
             for (int x = 0; x < 21; x++) {
                 write_dot(x, y, true, force);
@@ -142,6 +150,7 @@ public:
 
 
     void write_display(vector<int> new_display, int start_x = 0, int start_y = 0, bool force = false) {
+        // Write display bitwize array starting from start_x, start_y and don't check shown if force
         vector<int> x_range;
         if (horizontal == "WE") { // West to East
             for (int i = start_x; i < min(21, (int)new_display.size() + start_x); i++) {
@@ -183,7 +192,8 @@ public:
         _clear();
     }
 
-    void write_display_bool(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, bool force = false) {
+    void write_display_grid(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, bool force = false) {
+        // Write display boolean array starting from start_x, start_y and don't check shown if force
         vector<int> new_display_int;
         for (uint64_t x = 0; x < new_display.size(); x++) {
             int column = 0;
