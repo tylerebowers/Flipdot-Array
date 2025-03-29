@@ -259,13 +259,13 @@ PYBIND11_MODULE(display, m) {
         pybind11::arg("start_x") = 0,
         pybind11::arg("start_y") = 0,
         pybind11::arg("force") = false)
-    .def("write_display_bool", [](Display &self, 
+    .def("write_display_grid", [](Display &self, 
                                        vector<vector<bool>> new_display, 
                                        int start_x = 0, 
                                        int start_y = 0, 
                                        bool force = false) {
         try {
-            self.write_display_bool(new_display, start_x, start_y, force);
+            self.write_display_grid(new_display, start_x, start_y, force);
         } catch (...) {
             self._disable();
             self._clear();
