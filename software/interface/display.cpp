@@ -31,7 +31,7 @@ private:
     vector<uint32_t> shown = vector<uint32_t>(21, 0); 
 
 public:
-    uint32_t delay = 100;
+    uint32_t delay = 10000;
     string horizontal = "WE";
     string vertical = "NS";
     string order = "XY";
