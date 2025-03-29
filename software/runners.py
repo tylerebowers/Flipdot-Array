@@ -2,6 +2,7 @@ import libraries
 import numpy as np
 import datetime
 import requests
+import utils
 import time
 
 
@@ -188,7 +189,14 @@ class Power:
         elif self.choice == "shutdown":
             os.system("sudo /bin/systemctl poweroff")
         time.sleep(10)
-    
+
+class SelfTest:
+    def __init__(self, d, params={}):
+        utils.self_test(d)
+
+    def update(self):
+        time.sleep(1)
+
 """
 class Animator:
     def __init__(self, d, params):

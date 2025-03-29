@@ -6,7 +6,7 @@ echo "Updating software"
 git fetch --all
 git reset --hard origin/main
 
-read -t 10 -r -p "Recompile interface? [y/N] (continuing in 10s) " response 
+read -t 5 -r -p "Recompile interface? [y/N] (continuing in 5s) " response 
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
 then
     echo "Compiling interface"
