@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
-if "rpi" in platform.system():
+if "rpi" in platform.release():
     from interface.display import Display
     PORT = 80
 else:
