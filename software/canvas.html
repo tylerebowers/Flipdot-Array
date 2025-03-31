@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flipdot Canvas</title>
     <style>
+        h1 {
+            font-size: 3vw;
+        }
         body { 
             background: rgb(210, 210, 210);
             font-family: Arial, sans-serif; 
@@ -16,16 +19,16 @@
         }
         .grid { 
             display: grid; 
-            grid-template-columns: repeat(21, 36px); 
+            grid-template-columns: repeat(21, 4vw); 
             gap: 2px; 
             background: #000000;
-            padding: 10px;
-            margin: 20px;
-            border-radius: 10px;
+            padding: 0.8vw;
+            margin: 1.5vw;
+            border-radius: 1vw;
         } 
         .cell { 
-            width: 36px; 
-            height: 36px; 
+            width: 4vw; 
+            height: 4vw; 
             background: rgb(40, 40, 40); 
             cursor: pointer; 
             clip-path: polygon(
@@ -42,15 +45,24 @@
                 0% calc(100% - var(--corner)),
                 0% var(--corner)
                 );
-                --corner: 8px
+                --corner: 0.6vw
         }
         .on { 
             background: yellow; 
         }
         button { 
-            margin: 10px; 
-            padding: 10px; 
-            font-size: 18px; 
+            margin: 0.8vw; 
+            padding: 0.8vw;
+            font-size: 1.5vw; 
+        }
+        @media (pointer:none), (pointer:coarse) {
+            h1 {
+                font-size: 24px;
+            }
+            .grid {
+                gap: 1px;
+            }
+            
         }
     </style>
 </head>
