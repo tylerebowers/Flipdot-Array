@@ -61,6 +61,7 @@ class GameOfLife:
         for x in range(21):
             for y in range(7):
                 neighbors = self._count_neighbors(x, y)
+                time.sleep(0.001)
                 if self.d.check_shown(x, y):
                     if neighbors < 2 or neighbors > 3:
                         self.d.write_dot(x, y, False)
@@ -180,7 +181,7 @@ class Weather:
 class System:
     def __init__(self, d, params={}):
         self.d = d
-        self.d.all_off()
+        #self.d.all_off() # not needed since writing whole display
         self.choice = params.get("choice", "")
         if self.choice in ["reboot", "restart"]:
             self.d.write_display(libraries.screens["reboot"])
@@ -207,7 +208,7 @@ class System:
     
 class Static:
     def __init__(self, d, params={}):
-        d.all_off()
+        #d.all_off() # not needed since writing whole display
         self.frame = params.get("frame", [])
         self.bitwise = params.get("bitwise", True)
         if self.bitwise:
