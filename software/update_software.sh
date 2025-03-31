@@ -1,5 +1,6 @@
-# This script updates to the latest flipdot software.
+#!/bin/bash
 
+# This script updates to the latest flipdot software.
 echo "Updating software"
 
 INTERFACE="interface/display.cpp"
@@ -9,7 +10,6 @@ git fetch --all
 git reset --hard origin/main
 
 after=$(stat -c %Y "$INTERFACE")
-
 if [[ "$before" -ne "$after" ]]; then
     echo "display.cpp has been modified. Recompiling interface."
     response="y"
