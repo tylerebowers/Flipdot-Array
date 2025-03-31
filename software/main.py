@@ -59,7 +59,7 @@ class WebServer:
             print("Received:", r)
             utils.set_settings(d, r)
 
-        @self.app.post("/update_software", response_class=HTMLResponse)
+        @self.app.get("/update_software", response_class=HTMLResponse)
         async def update_software(request: Request):
             import subprocess # will this work?
             subprocess.run(["./update_software.sh"])

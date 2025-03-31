@@ -72,6 +72,11 @@
                 body: JSON.stringify({'mode': mode, 'params': params})
             });
         }
+        function update_software() {
+            fetch(window.location.origin + '/update_software', {
+                method: 'GET'
+            })
+        }
     </script>
 </head>
 <body>
@@ -182,7 +187,7 @@
             <button onclick="change_mode('Self Test', {})">Self Test</button>
             <button class="danger" onclick="change_mode('Power', {choice: 'reboot'})">Reboot</button>
             <button class="danger" onclick="change_mode('Power', {choice: 'shutdown'})">Shutdown</button>
-            <!--<button onclick="change_mode('Update', {})">Update</button>-->
+            <button onclick="update_software()">Update</button>
         </div>
     </div>
 
