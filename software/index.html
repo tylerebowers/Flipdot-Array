@@ -33,10 +33,14 @@
         .section:last-child {
             border-bottom: none;
         }
+        .section strong {
+            font-size: 20px;
+        }
         button {
             background-color: rgba(0, 0, 255, 0.70);
             color: rgb(0, 0, 0);
-            border: none;
+            border: 1px solid rgb(0, 0, 0);
+            font-size: 14px;
             padding: 10px 15px;
             border-radius: 6px;
             cursor: pointer;
@@ -96,7 +100,7 @@
                 <option value=8>08:00</option>
                 <option value=9>09:00</option>
                 <option value=10>10:00</option>
-            </select>
+            </select> <br>
             Stop at: <select id="clock-stop">
                 <option value="">--</option>
                 <option value=19>19:00</option>
@@ -126,7 +130,6 @@
             <strong>Scrolling Text</strong>
             <label>Text: <input id="scrolling-text-text" value="Hello World"></label>
             <label>TBF: <select id="scrolling-text-tbf">
-                <option value=0.1>100ms</option>
                 <option value=0.25>250ms</option>
                 <option value=0.5>500ms</option>
                 <option value=1 selected>1s</option>
