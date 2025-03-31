@@ -63,7 +63,7 @@
         }
     </style>
     <script>
-        function change_mode(mode, params) {
+        function mode(mode, params) {
             fetch(window.location.origin + '/mode', {
                 method: 'POST',
                 headers: {
@@ -71,11 +71,6 @@
                 },
                 body: JSON.stringify({'mode': mode, 'params': params})
             });
-        }
-        function update_software() {
-            fetch(window.location.origin + '/update_software', {
-                method: 'GET'
-            })
         }
     </script>
 </head>
@@ -105,7 +100,7 @@
                 <option value=24>24:00</option>
             </select>
             <label><input type="checkbox" id="clock-format"> 24 Hour</label>
-            <button onclick="change_mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked), start_hour: document.getElementById('clock-start').value, stop_hour: document.getElementById('clock-stop').value})">Set Mode</button>
+            <button onclick="mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked), start_hour: document.getElementById('clock-start').value, stop_hour: document.getElementById('clock-stop').value})">Set Mode</button>
         </div>
 
         <div class="section">
@@ -117,7 +112,7 @@
                 <option value=1>1s</option>
                 <option value=2>2s</option>
             </select></label>
-            <button onclick="change_mode('Game of Life', {tbf: document.getElementById('game-of-life-tbf').value})">Set Mode</button>
+            <button onclick="mode('Game of Life', {tbf: document.getElementById('game-of-life-tbf').value})">Set Mode</button>
         </div>
 
         <div class="section">
@@ -130,23 +125,23 @@
                 <option value=1 selected>1s</option>
                 <option value=2>2s</option>
             </select></label>
-            <button onclick="change_mode('Scrolling Text', {tbf: document.getElementById('scrolling-text-tbf').value, text: document.getElementById('scrolling-text-text').value})">Set Mode</button>
+            <button onclick="mode('Scrolling Text', {tbf: document.getElementById('scrolling-text-tbf').value, text: document.getElementById('scrolling-text-text').value})">Set Mode</button>
         </div>
 
         <div class="section">
             <strong>Weather</strong> <br>
             <label><input type="checkbox" id="weather-format"> Use Celsius</label>
-            <button onclick="change_mode('Weather', {use_celsius: Boolean(document.getElementById('weather-format').checked)})">Set Mode</button>
+            <button onclick="mode('Weather', {use_celsius: Boolean(document.getElementById('weather-format').checked)})">Set Mode</button>
         </div>
 
         <div class="section">
             <strong>Date</strong> <br>
-            <button onclick="change_mode('Date', {})">Set Mode</button>
+            <button onclick="mode('Date', {})">Set Mode</button>
         </div>
 
         <div class="section">
             <strong>Off</strong> <br>
-            <button onclick="change_mode('Off', {})">Set Mode</button>
+            <button onclick="mode('Off', {})">Set Mode</button>
         </div>
     </div>
     <div class="container">
@@ -184,10 +179,11 @@
         -->
         <div class="section">
             <strong>System</strong> <br>
-            <button onclick="change_mode('Self Test', {})">Self Test</button>
-            <button class="danger" onclick="change_mode('Power', {choice: 'reboot'})">Reboot</button>
-            <button class="danger" onclick="change_mode('Power', {choice: 'shutdown'})">Shutdown</button>
-            <button onclick="update_software()">Update</button>
+            <button onclick="mode('System', {choice: 'self-test'})">Self Test</button>
+            <button class="danger" onclick="mode('System', {choice: 'reboot'})">Reboot</button>
+            <button class="danger" onclick="mode('System', {choice: 'shutdown'})">Shutdown</button>
+            <button onclick="mode('System', {choice: 'update'})">Update</button>
+            <button onclick="mode('System', {choice: 'service-restart'})">Restart Service</button>
         </div>
     </div>
 

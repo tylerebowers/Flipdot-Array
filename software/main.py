@@ -4,6 +4,7 @@ import threading
 import socket
 import time
 import utils
+import os
 import platform
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
@@ -51,18 +52,13 @@ class WebServer:
             global new_mode
             new_mode = await request.json()
             print("Received: ", new_mode)
-            return templates.TemplateResponse("index.html", {"request": request, "display_mode": new_mode.get("mode", None)})
+            #return templates.TemplateResponse("index.html", {"request": request, "display_mode": new_mode.get("mode", None)})
         
         @self.app.post("/settings", response_class=HTMLResponse)
         async def set_settings(request: Request):
             r = await request.json()
             print("Received:", r)
             utils.set_settings(d, r)
-
-        @self.app.get("/update_software", response_class=HTMLResponse)
-        async def update_software(request: Request):
-            import subprocess # will this work?
-            subprocess.run(["bash", "update_software.sh"])
 
         
     def run(self):
@@ -76,7 +72,7 @@ if __name__ == "__main__":
         "Scrolling Text": runners.ScrollingText,
         "Date": runners.Date,
         "Weather": runners.Weather,
-        "Power": runners.Power,
+        "System": runners.System,
         "Self Test": runners.SelfTest
     }
     new_mode = {"mode":"Clock", "params":{}}  

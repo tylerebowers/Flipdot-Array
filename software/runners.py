@@ -4,6 +4,7 @@ import datetime
 import requests
 import utils
 import time
+import os
 
 
 
@@ -176,30 +177,27 @@ class Weather:
     def __str__(self):
         return "Weather"
     
-class Power:
+class System:
     def __init__(self, d, params={}):
         self.d = d
         self.d.all_off()
-        self.choice = params.get("choice", "shutdown")
-        if self.choice == "reboot":
+        self.choice = params.get("choice", "")
+        if self.choice in ["reboot", "restart"]:
             self.d.write_display(libraries.screens["reboot"])
-        elif self.choice == "shutdown":
-            self.d.write_display(libraries.screens["shutdown"])
-
-    def update(self):
-        import os
-        if self.choice == "reboot":
             os.system("sudo /bin/systemctl reboot")
-        elif self.choice == "shutdown":
+        elif self.choice in ["shutdown", "poweroff"]:
+            self.d.write_display(libraries.screens["shutdown"])
             os.system("sudo /bin/systemctl poweroff")
-        time.sleep(10)
-
-class SelfTest:
-    def __init__(self, d, params={}):
-        utils.self_test(d)
+        elif self.choice == "service-restart":
+            os.system("sudo systemctl restart flipdots.service")
+        elif self.choice == "update":
+            self.d.write_display(libraries.screens["update"])
+            os.system("./update_software.sh")
+        elif self.choice == "self-test":
+            utils.self_test(d)
 
     def update(self):
-        time.sleep(1)
+        time.sleep(2)
 
 """
 class Animator:
