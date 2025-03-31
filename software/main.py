@@ -76,18 +76,21 @@ if __name__ == "__main__":
     }
     new_mode = {"mode":"Clock", "params":{}}  
     
+    print("Getting IP")
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip = s.getsockname()[0]
     # If the script crashes here it will be restarted by systemd
 
     d = Display()
+    print("Self test")
     utils.self_test(d)
     ip_runner = runners.ScrollingText(d, {"text": ip[[i for i, n in enumerate(ip) if n == '.'][1]:]})
     ip_runner.update()
     del ip_runner
     time.sleep(2)
 
+    print("Starting Webserver")
     server = WebServer()
     runner = Runner()
     threading.Thread(target=server.run).start()
