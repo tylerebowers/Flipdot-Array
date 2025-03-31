@@ -62,7 +62,7 @@ class WebServer:
         @self.app.get("/update_software", response_class=HTMLResponse)
         async def update_software(request: Request):
             import subprocess # will this work?
-            subprocess.run(["./update_software.sh"])
+            subprocess.run(["bash", "update_software.sh"])
 
         
     def run(self):
