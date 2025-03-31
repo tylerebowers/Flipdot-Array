@@ -58,6 +58,12 @@ class WebServer:
             r = await request.json()
             print("Received:", r)
             utils.set_settings(d, r)
+
+        @self.app.post("/update_software", response_class=HTMLResponse)
+        async def update_software(request: Request):
+            import subprocess # will this work?
+            subprocess.run(["./update_software.sh"])
+
         
     def run(self):
         uvicorn.run(self.app, host=ip, port=PORT)

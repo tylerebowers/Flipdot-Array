@@ -26,9 +26,13 @@ class Clock:
         if now.hour >= self.start_hour and now.hour < self.stop_hour and now.minute != self.shown_time.minute:
                 self.shown_time = now
                 self.d.write_display(libraries.numbers_7x4[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)])
+                self.d.write_display([0], start_x=4)
                 self.d.write_display(libraries.numbers_7x4[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5)
+                self.d.write_display([0], start_x=9)
                 self.d.write_display(libraries.ascii_7[":"], start_x=10)
+                self.d.write_display([0], start_x=11)
                 self.d.write_display(libraries.numbers_7x4[int(now.minute / 10)], start_x=12)
+                self.d.write_display([0], start_x=16)
                 self.d.write_display(libraries.numbers_7x4[now.minute % 10], start_x=17)
         elif now.hour != self.shown_time.hour:
             self.d.write_display(libraries.screens["sleep"])
