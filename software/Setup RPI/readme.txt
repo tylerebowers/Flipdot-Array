@@ -5,4 +5,4 @@ sudo nano /boot/firmware/cmdline.txt
 # To allow shutdowns and reboots from the web GUI password auth must be removed.
 # edit the sudoers file: sudo visudo
 # and add the following line:
-admin ALL=(ALL) NOPASSWD: /bin/systemctl poweroff, /bin/systemctl reboot, systemctl stop flipdots.service, systemctl start flipdots.service, systemctl restart flipdots.service
+admin ALL=(ALL) NOPASSWD: /bin/systemctl poweroff, /bin/systemctl reboot, /bin/systemctl stop flipdots.service, /bin/systemctl start flipdots.service, /bin/systemctl restart flipdots.service

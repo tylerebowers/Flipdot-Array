@@ -1,7 +1,7 @@
 # This script updates to the latest flipdot software.
 
 echo "Stopping service"
-sudo systemctl stop flipdots.service  # already running as root
+systemctl stop flipdots.service  # already running as root
 echo "Updating software"
 
 INTERFACE="interface/display.cpp"
@@ -10,7 +10,7 @@ before=$(stat -c %Y "$INTERFACE")
 git fetch --all
 git reset --hard origin/main
 
-after=$(stat -c %Y "$file")
+after=$(stat -c %Y "$INTERFACE")
 if [[ "$before" -ne "$after" ]]; then
     echo "display.cpp has been modified. Recompiling interface."
     response="y"
@@ -28,4 +28,4 @@ then
 fi
 
 echo "Starting service"
-sudo systemctl start flipdots.service
+systemctl start flipdots.service

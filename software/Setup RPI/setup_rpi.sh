@@ -12,6 +12,7 @@ wget https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_a
 sudo apt install ./wiringpi_3.14_arm64.deb -y
 git clone https://github.com/tylerebowers/Flipdot-Array
 cd Flipdot-Array/software/
+sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/python3
 #git fetch --all
 #git reset --hard origin/main
 
@@ -24,9 +25,10 @@ Description=Startup flipdots controller script service
 After=network.target
 
 [Service]
-User=root ; since we need port 80 to access from flipdots.local
+User=$USER
 WorkingDirectory=/home/$USER/Flipdot-Array/software/
 ExecStart=/usr/bin/screen -S flipdots-service -dm /usr/bin/python3 main.py
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 Restart=always
 Type=forking
 
