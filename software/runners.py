@@ -11,7 +11,7 @@ import os
 class Clock:
     def __init__(self, d, params={}):
         self.d = d
-        self.d.all_off()
+        #self.d.all_off() # not needed since writing whole display
         self.hours_24 = bool(params.get("hours_24", False))
 
         self.start_hour = int(params.get("start_hour", -1) or -1)
