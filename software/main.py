@@ -6,7 +6,7 @@ import time
 import utils
 import os
 import platform
-from fastapi import FastAPI, Form
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
@@ -46,19 +46,28 @@ class WebServer:
         async def get_index(request: Request):
             global new_mode
             return templates.TemplateResponse("index.html", {"request": request, "display_mode": str(new_mode)})
+        
+        @self.app.get("/canvas", response_class=HTMLResponse)
+        async def get_index(request: Request):
+            global new_mode
+            return templates.TemplateResponse("canvas.html", {"request": request, "display_mode": str(new_mode)})
 
-        @self.app.post("/mode", response_class=HTMLResponse)
+        @self.app.post("/mode")
         async def set_mode(request: Request):
             global new_mode
             new_mode = await request.json()
             print("Received: ", new_mode)
-            #return templates.TemplateResponse("index.html", {"request": request, "display_mode": new_mode.get("mode", None)})
-        
-        @self.app.post("/settings", response_class=HTMLResponse)
+            return 
+
+        @self.app.post("/settings")
         async def set_settings(request: Request):
             r = await request.json()
             print("Received:", r)
-            utils.set_settings(d, r)
+            d.delay = max(int(r.get("delay", 10) or 10),0)
+            d.horizontal = "WE" if r.get("horizontal", "WE") == "WE" else "EW"
+            d.vertical = "NS" if r.get("vertical", "NS") == "NS" else "SN"
+            d.order = "XY" if r.get("order", "XY") == "XY" else "YX"
+            return
 
         
     def run(self):
@@ -73,6 +82,7 @@ if __name__ == "__main__":
         "Date": runners.Date,
         "Weather": runners.Weather,
         "System": runners.System,
+        "Static": runners.Static,
     }
     new_mode = {"mode":"Clock", "params":{}}  
     

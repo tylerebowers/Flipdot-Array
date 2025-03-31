@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipdot Canvas</title>
+    <style>
+        body { 
+            background: rgb(210, 210, 210);
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+        }
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(21, 40px); 
+            gap: 2px; 
+            background: #000000;
+            padding: 10px;
+            margin: 20px;
+            border-radius: 10px;
+        } 
+        .cell { 
+            width: 40px; 
+            height: 40px; 
+            background: rgb(40, 40, 40); 
+            cursor: pointer; 
+            clip-path: polygon(
+                /* top edge */
+                var(--corner)              0%,
+                calc(100% - var(--corner)) 0%,
+                /* right edge */
+                100% var(--corner),
+                100% calc(100% - var(--corner)),
+                /* bottom edge */
+                calc(100% - var(--corner)) 100%,
+                var(--corner)              100%,
+                /* left edge */
+                0% calc(100% - var(--corner)),
+                0% var(--corner)
+                );
+                --corner: 8px
+        }
+        .on { 
+            background: yellow; 
+        }
+        button { 
+            margin: 10px; 
+            padding: 10px; 
+            font-size: 18px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Flipdot Canvas</h1>
+    <a href="/" style="text-decoration:none">
+        <button id="backButton">Back</button>
+    </a>
+    <button id="modeToggle">Mode: Draw</button>
+    <button id="all-on">All On</button>
+    <button id="all-off">All Off</button>
+    <button id="send">Send</button>
+    <div class="center">
+        <div class="grid" id="canvas"></div>
+    </div>
+    <p id="output"></p>
+    
+    <script>
+        const rows = 7, cols = 21;
+        let drawMode = true; // true -> drawing, false -> erasing
+        let isDrawing = false;
+        const canvas = document.getElementById("canvas");
+        const output = document.getElementById("output");
+        const modeToggle = document.getElementById("modeToggle");
+        const allOnBtn = document.getElementById("all-on");
+        const allOffBtn = document.getElementById("all-off");
+        const sendBtn = document.getElementById("send");
+        
+        const grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+        
+        function renderGrid() {
+            canvas.innerHTML = "";
+            grid.forEach((row, rIdx) => {
+                row.forEach((cell, cIdx) => {
+                    const div = document.createElement("div");
+                    div.classList.add("cell");
+                    if (cell) div.classList.add("on");
+                    div.addEventListener("mousedown", (e) => {
+                        isDrawing = true;
+                        toggleCell(rIdx, cIdx);
+                    });
+                    div.addEventListener("mouseup", (e) => {
+                        isDrawing = false;
+                    });
+                    div.addEventListener("mouseover", (e) => {
+                        if (isDrawing) toggleCell(rIdx, cIdx);
+                    });
+                    div.addEventListener("touchstart", (e) => {
+                        e.preventDefault();
+                        isDrawing = true;
+                        toggleCell(rIdx, cIdx);
+                    });
+                    div.addEventListener("touchmove", (e) => {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (element && element.classList.contains("cell")) {
+                            const index = Array.from(canvas.children).indexOf(element);
+                            const row = Math.floor(index / cols);
+                            const col = index % cols;
+                            toggleCell(row, col);
+                        }
+                    });
+                    canvas.appendChild(div);
+                });
+            });
+        }
+        
+        function toggleCell(r, c) {
+            grid[r][c] = drawMode ? 1 : 0;
+            renderGrid();
+        }
+        
+        document.addEventListener("mouseup", () => isDrawing = false);
+        document.addEventListener("touchend", () => isDrawing = false);
+        
+        modeToggle.addEventListener("click", () => {
+            drawMode = !drawMode;
+            modeToggle.textContent = `Mode: ${drawMode ? "Draw" : "Erase"}`;
+        });
+
+        allOnBtn.addEventListener("click", () => {
+            grid.forEach((row, rIdx) => {
+                row.forEach((cell, cIdx) => {
+                    grid[rIdx][cIdx] = 1;
+                });
+            });
+            renderGrid();
+        });
+        
+        allOffBtn.addEventListener("click", () => {
+            grid.forEach((row, rIdx) => {
+                row.forEach((cell, cIdx) => {
+                    grid[rIdx][cIdx] = 0;
+                });
+            });
+            renderGrid();
+        });
+        
+        sendBtn.addEventListener("click", () => {
+            const out = Array(cols).fill(0);
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    out[c] |= grid[r][c] << r;
+                }
+            }
+            response = fetch(window.location.origin + '/mode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'mode': 'Static', 'params': {'frame': out}})
+            });
+            Promise.resolve(response).then(response => {
+                if (response.ok) {
+                    output.textContent = JSON.stringify(out);
+                } else {
+                    output.textContent = "Error: " + response.statusText;
+                }  
+            })
+        });
+        
+        renderGrid();
+    </script>
+</body>
+</html>

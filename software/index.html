@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e3e3e3;
+            background-color: rgb(220, 220, 220);
             color: #333;
             text-align: center;
             padding: 20px;
@@ -16,7 +16,7 @@
             color: #111;
         }
         .container {
-            background: #fff;
+            background: rgb(200, 200, 200);
             padding: 25px;
             border-radius: 10px;
             margin: 10px auto;
@@ -24,17 +24,18 @@
             display: block;
             text-align: left;
             max-width: 400px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
         }
         .section {
             padding: 15px 0;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid rgb(0, 0, 0);
         }
         .section:last-child {
             border-bottom: none;
         }
         button {
-            background-color: #0d00c9;
-            color: white;
+            background-color: rgba(0, 0, 255, 0.70);
+            color: rgb(0, 0, 0);
             border: none;
             padding: 10px 15px;
             border-radius: 6px;
@@ -42,18 +43,20 @@
             margin-top: 5px;
         }
         button:hover {
-            background-color: #00035f;
+            background-color: rgba(0, 0, 255, 0.40);
         }
         .danger {
-            background-color: red;
+            background-color: rgba(255, 0, 0, 0.70);
         }
         .danger:hover {
-            background-color: #950000;
+            background-color: rgba(255, 0, 0, 0.40);
         }
-        select, input[type="text"] {
+        select, input {
             padding: 6px;
             margin: 6px 0;
-            border: 1px solid #bbb;
+            border: 1px solid #000000;
+            background: #e8e8e8;
+            background-color: #e8e8e8;
             border-radius: 5px;
         }
         label {
@@ -78,9 +81,13 @@
     <h1>Flipdot Display</h1>
     <div class="container">
         <div class="section">
+            <strong>Canvas</strong> <br>
+            <a href="canvas">
+                <button>Open Canvas</button>
+            </a>
+        </div>
+        <div class="section">
             <strong>Clock</strong> <br>
-            <br>
-            Active hours (if using select from both): <br>
             Start at: <select id="clock-start">
                 <option value="">--</option>
                 <option value=5>05:00</option>

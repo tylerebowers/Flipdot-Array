@@ -77,7 +77,7 @@ class Off:
         d.all_off()
     
     def update(self):
-        pass
+        time.sleep(1)
 
     def __str__(self):
         return "Off"
@@ -194,13 +194,34 @@ class System:
             self.d.write_display(libraries.screens["update"])
             os.system("./update_software.sh")
         elif self.choice == "self-test":
-            utils.self_test(d)
+            d.all_on()
+            time.sleep(2)
+            d.all_off()
+            time.sleep(2)
 
     def update(self):
         time.sleep(2)
 
     def __str__(self):
         return "System"
+    
+class Static:
+    def __init__(self, d, params={}):
+        d.all_off()
+        self.frame = params.get("frame", [])
+        self.bitwise = params.get("bitwise", True)
+        if self.bitwise:
+            d.write_display(self.frame)
+        else:
+            d.write_display_grid(self.frame)
+    
+    def update(self):
+        time.sleep(1)
+        pass
+
+    def __str__(self):
+        return "Static"
+    
 
 """
 class Animator:
