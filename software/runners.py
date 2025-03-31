@@ -199,6 +199,9 @@ class System:
     def update(self):
         time.sleep(2)
 
+    def __str__(self):
+        return "System"
+
 """
 class Animator:
     def __init__(self, d, params):
