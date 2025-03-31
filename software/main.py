@@ -73,7 +73,6 @@ if __name__ == "__main__":
         "Date": runners.Date,
         "Weather": runners.Weather,
         "System": runners.System,
-        "Self Test": runners.SelfTest
     }
     new_mode = {"mode":"Clock", "params":{}}  
     
