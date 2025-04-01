@@ -84,7 +84,7 @@ if __name__ == "__main__":
         "System": runners.System,
         "Static": runners.Static,
     }
-    new_mode = {"mode":"Clock", "params":{}}  
+    new_mode = {"mode":"Clock", "params":{"start_hour": 7, "stop_hour": 24, "hours_24": False}}  
     
     print("Getting IP")
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -167,10 +167,10 @@
         });
         
         sendBtn.addEventListener("click", () => {
-            const out = Array(cols).fill(0);
+            const frameOut = Array(cols).fill(0);
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
-                    out[c] |= grid[r][c] << r;
+                    frameOut[c] |= grid[r][c] << r;
                 }
             }
             response = fetch(window.location.origin + '/mode', {
@@ -178,11 +178,11 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({'mode': 'Static', 'params': {'frame': out}})
+                body: JSON.stringify({'mode': 'Static', 'params': {'frame': frameOut}})
             });
             Promise.resolve(response).then(response => {
                 if (response.ok) {
-                    output.textContent = JSON.stringify(out);
+                    output.textContent = JSON.stringify(frameOut);
                 } else {
                     output.textContent = "Error: " + response.statusText;
                 }  
