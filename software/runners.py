@@ -20,7 +20,7 @@ class Clock:
             print("Invalid start or stop hour")
             self.start_hour = -1
             self.stop_hour = 25
-        self.shown_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+        self.shown_time = datetime.datetime.now() - datetime.timedelta(hours=1, minutes=5)
     
     def update(self):
         now = datetime.datetime.now()
