@@ -5,6 +5,7 @@ import socket
 import time
 import utils
 import os
+import asyncio
 import platform
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
@@ -42,7 +43,7 @@ class Runner:
 class WebServer:
     def __init__(self):
         self.app = FastAPI()
-        self.clients = set()
+        self.websocket_client = None
         templates = Jinja2Templates(directory=".")
 
         @self.app.get("/", response_class=HTMLResponse)
@@ -74,24 +75,35 @@ class WebServer:
         
         @self.app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket): 
-            global new_mode
-            await websocket.accept()
-            self.clients.add(websocket)
-            new_mode = {"mode": "Static", "params": {"frame": []}}
-            print("WebSocket client connected")
-            try:
-                while True:
-                    data = await websocket.receive_json() # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
-                    try:
-                        if data.get("dot", None) != None:
-                            d.write_dot(data["dot"][0], data["dot"][1], bool(data["dot"][2]))
-                        elif data.get("frame", None) != None:
-                            d.write_display(data["frame"])
-                    except Exception as e:
-                        print(e)
-            except WebSocketDisconnect:
-                self.clients.remove(websocket)
-                print("WebSocket client disconnected")
+            if self.websocket_client:
+                await websocket.close(code=1008)  
+                print("WebSocket connection rejected: already connected")
+                return
+            else:
+                await websocket.accept()
+                self.websocket_client = websocket
+                global new_mode
+                new_mode = {"mode": "Static", "params": {"frame": []}}
+                print("WebSocket client connected")
+                try:
+                    while True:
+                        data = await asyncio.wait_for(websocket.receive_json(), timeout=120) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
+                        try:
+                            if data.get("dot", None) != None:
+                                d.write_dot(data["dot"][0], data["dot"][1], bool(data["dot"][2]))
+                            elif data.get("frame", None) != None:
+                                d.write_display(data["frame"])
+                        except Exception as e:
+                            print(e)
+                except asyncio.TimeoutError:
+                    print("WebSocket client inactive - disconnecting")
+                    await websocket.close(code=1001) 
+                except WebSocketDisconnect:
+                    print("WebSocket client disconnected")
+                except Exception as e:
+                    print("WebSocket error:", e)
+                finally:
+                    self.websocket_client = None
 
         
     def run(self):
