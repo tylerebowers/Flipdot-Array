@@ -111,6 +111,7 @@
             if (socket != null) {
                 socket.close();
                 streamBtn.textContent = "Stream: Inactive";
+                socket = null;
             } else {
                 socket = new WebSocket(`ws://${window.location.host}/ws`);
                 socket.onopen = () => {
