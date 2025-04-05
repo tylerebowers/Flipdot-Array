@@ -118,6 +118,19 @@
                     socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
                     streamBtn.textContent = "Stream: Active";
                 };
+                socket.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.frame) {
+                        for (let c = 0; c < cols; c++) {
+                            for (let r = 0; r < rows; r++) {
+                                grid[r][c] = (data.frame[c] >> r) & 1;
+                            }
+                        }
+                        renderGrid();
+                    } else if (data.dot) {
+                        forceCell(data.dot[0], data.dot[1], data.dot[2]);
+                    }
+                };
                 socket.onclose = () => {
                     console.log("WebSocket disconnected");
                     streamBtn.textContent = "Stream: Inactive";
@@ -169,6 +182,11 @@
         function toggleCell(r, c) {
             if (socket != null) socket.send(JSON.stringify({"dot": [c,r,drawMode ? 1 : 0]}));
             grid[r][c] = drawMode ? 1 : 0;
+            renderGrid();
+        }
+
+        function forceCell(r, c, state) {
+            grid[r][c] = (state>0)? 1 : 0;
             renderGrid();
         }
         

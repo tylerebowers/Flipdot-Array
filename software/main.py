@@ -79,9 +79,12 @@ class WebServer:
                 await self.websocket_client.close(code=1000)  
             await websocket.accept()
             self.websocket_client = websocket
+            print("WebSocket client connected")
+
             global new_mode
             new_mode = {"mode": "Static", "params": {"frame": []}}
-            print("WebSocket client connected")
+            self.websocket_client.send_json({"frame": self.d.get_shown()})
+            
             try:
                 while True:
                     data = await asyncio.wait_for(websocket.receive_json(), timeout=120) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
