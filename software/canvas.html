@@ -118,7 +118,7 @@
                     socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
                     streamBtn.textContent = "Stream: Active";
                 };
-                socket.onmessage = (event) => {
+                socket.onmessage = (event) => { // not used but maybe useful
                     const data = JSON.parse(event.data);
                     if (data.frame) {
                         for (let c = 0; c < cols; c++) {
@@ -134,7 +134,10 @@
                 socket.onclose = () => {
                     console.log("WebSocket disconnected");
                     streamBtn.textContent = "Stream: Inactive";
-                    socket = null;
+                };
+                socket.onerror = (error) => {
+                    console.error("WebSocket error:", error);
+                    streamBtn.textContent = "Stream: Inactive";
                 };
             }
         }

@@ -210,12 +210,8 @@ class Static:
     def __init__(self, d, params={}):
         #d.all_off() # not needed since writing whole display
         self.frame = params.get("frame", [])
-        self.bitwise = params.get("bitwise", True)
         self.d = d
-        if self.bitwise:
-            self.d.write_display(self.frame)
-        else:
-            self.d.write_display_grid(self.frame)
+        self.d.write_display(self.frame)
     
     def update(self):
         time.sleep(1)
@@ -230,12 +226,11 @@ class Animator:
     def __init__(self, d, params):
         self.d.all_off()
         self.keyframes = params.get("keyframes", [])
-        self.bitwise = params.get("bitwise", True)
         self.sleep_time = float(params.get('tbf', 1) or 1)
         self.frame = 0
 
     def update(self):
-        self.d.write_display(self.keyframes[self.frame], bitwise=self.bitwise)
+        self.d.write_display(self.keyframes[self.frame])
         self.frame = (self.frame + 1) % len(self.keyframes)
         time.sleep(self.sleep_time)
 """

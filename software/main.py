@@ -84,11 +84,10 @@ class WebServer:
 
             global new_mode
             new_mode = {"mode": "Static", "params": {"frame": []}}
-            self.websocket_client.send_json({"frame": d.get_shown()})
 
             try:
                 while True:
-                    data = await asyncio.wait_for(websocket.receive_json(), timeout=120) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
+                    data = await asyncio.wait_for(websocket.receive_json(), timeout=60) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
                     try:
                         if data.get("dot", None) != None:
                             d.write_dot(data["dot"][0], data["dot"][1], bool(data["dot"][2]))

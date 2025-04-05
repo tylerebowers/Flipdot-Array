@@ -150,7 +150,7 @@ public:
 
 
     void write_display(vector<int> new_display, int start_x = 0, int start_y = 0, bool force = false) {
-        // Write display bitwize array starting from start_x, start_y and don't check shown if force
+        // Write display bitwise array starting from start_x, start_y and don't check shown if force
         vector<int> x_range;
         if (horizontal == "WE") { // West to East
             for (int i = start_x; i < min(21, (int)new_display.size() + start_x); i++) {
@@ -190,21 +190,6 @@ public:
         }
         _disable();
         _clear();
-    }
-
-    void write_display_grid(vector<vector<bool>> new_display, int start_x = 0, int start_y = 0, bool force = false) {
-        // Write display boolean array starting from start_x, start_y and don't check shown if force
-        vector<int> new_display_int;
-        for (uint64_t x = 0; x < new_display.size(); x++) {
-            int column = 0;
-            for (uint64_t y = 0; y < new_display[x].size(); y++) {
-                if (new_display[x][y]) {
-                    column |= (1ULL << y);
-                }
-            }
-            new_display_int.push_back(column);
-        }
-        write_display(new_display_int, start_x, start_y, force);
     }
 
 };
@@ -259,23 +244,6 @@ PYBIND11_MODULE(display, m) {
         pybind11::arg("start_x") = 0,
         pybind11::arg("start_y") = 0,
         pybind11::arg("force") = false)
-    .def("write_display_grid", [](Display &self, 
-                                       vector<vector<bool>> new_display, 
-                                       int start_x = 0, 
-                                       int start_y = 0, 
-                                       bool force = false) {
-        try {
-            self.write_display_grid(new_display, start_x, start_y, force);
-        } catch (...) {
-            self._disable();
-            self._clear();
-            throw;
-        }
-    },
-        pybind11::arg("new_display"),
-        pybind11::arg("start_x") = 0,
-        pybind11::arg("start_y") = 0,
-        pybind11::arg("force") = false);
 }
 
 /*
