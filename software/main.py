@@ -6,7 +6,7 @@ import time
 import utils
 import os
 import platform
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
@@ -17,6 +17,8 @@ if "rpi" in platform.release():
 else:
     from interface.display_simulator import Display
     PORT = 8000
+
+
 
 class Runner:
     def __init__(self):
@@ -40,6 +42,7 @@ class Runner:
 class WebServer:
     def __init__(self):
         self.app = FastAPI()
+        self.clients = set()
         templates = Jinja2Templates(directory=".")
 
         @self.app.get("/", response_class=HTMLResponse)
@@ -68,6 +71,27 @@ class WebServer:
             d.vertical = "NS" if r.get("vertical", "NS") == "NS" else "SN"
             d.order = "XY" if r.get("order", "XY") == "XY" else "YX"
             return
+        
+        @self.app.websocket("/ws")
+        async def websocket_endpoint(websocket: WebSocket): 
+            global new_mode
+            await websocket.accept()
+            self.clients.add(websocket)
+            new_mode = {"mode": "Static", "params": {"frame": [0]*21}}
+            print("WebSocket client connected")
+            try:
+                while True:
+                    data = await websocket.receive_json() # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
+                    try:
+                        if data.get("dot", None) != None:
+                            d.write_dot(data["dot"][0], data["dot"][1], bool(data["dot"][2]))
+                        elif data.get("frame", None) != None:
+                            d.write_display(data["frame"])
+                    except Exception as e:
+                        print(e)
+            except WebSocketDisconnect:
+                self.clients.remove(websocket)
+                print("WebSocket client disconnected")
 
         
     def run(self):

@@ -211,10 +211,11 @@ class Static:
         #d.all_off() # not needed since writing whole display
         self.frame = params.get("frame", [])
         self.bitwise = params.get("bitwise", True)
+        self.d = d
         if self.bitwise:
-            d.write_display(self.frame)
+            self.d.write_display(self.frame)
         else:
-            d.write_display_grid(self.frame)
+            self.d.write_display_grid(self.frame)
     
     def update(self):
         time.sleep(1)

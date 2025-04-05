@@ -56,6 +56,10 @@
             padding: 0.8vw;
             font-size: 1.5vw; 
         }
+        textarea {
+            font-size: 1vw;
+            margin-top: 1vw;
+        }
         @media (pointer:none), (pointer:coarse) {
             h1 {
                 font-size: 24px;
@@ -78,24 +82,49 @@
     <button id="modeToggle">Mode: Draw</button>
     <button id="all-on">All On</button>
     <button id="all-off">All Off</button>
+    <button id="import">Import</button>
+    <button id="stream">Stream: Inactive</button>
     <button id="send">Send</button>
-    <div class="center">
+    <div class="center" oncontextmenu="return false;">
         <div class="grid" id="canvas"></div>
     </div>
-    <p id="output"></p>
+    <textarea id="inputOutputBox" rows="1" cols="60" placeholder="Input/output area (e.g., [24,36,...])"></textarea>
     
     <script>
         const rows = 7, cols = 21;
         let drawMode = true; // true -> drawing, false -> erasing
         let isDrawing = false;
+        let socket = null;
         const canvas = document.getElementById("canvas");
-        const output = document.getElementById("output");
         const modeToggle = document.getElementById("modeToggle");
         const allOnBtn = document.getElementById("all-on");
         const allOffBtn = document.getElementById("all-off");
+        const importBtn = document.getElementById("import");
+        const streamBtn = document.getElementById("stream");
         const sendBtn = document.getElementById("send");
         
         const grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+        const inputOutputBox = document.getElementById("inputOutputBox");
+
+        function toggleWebSocket() {
+            if (socket != null) {
+                socket.close();
+                streamBtn.textContent = "Stream: Inactive";
+            } else {
+                socket = new WebSocket(`ws://${window.location.host}/ws`);
+                socket.onopen = () => {
+                    console.log("WebSocket connected");
+                    socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
+                    streamBtn.textContent = "Stream: Active";
+                };
+                socket.onclose = () => {
+                    console.log("WebSocket disconnected");
+                    streamBtn.textContent = "Stream: Inactive";
+                    socket = null;
+                };
+            }
+        }
         
         function renderGrid() {
             canvas.innerHTML = "";
@@ -106,6 +135,8 @@
                     if (cell) div.classList.add("on");
                     div.addEventListener("mousedown", (e) => {
                         isDrawing = true;
+                        drawMode = (e.button >= 1) ? false : true;
+                        modeToggle.textContent = `Mode: ${drawMode ? "Draw" : "Erase"}`;
                         toggleCell(rIdx, cIdx);
                     });
                     div.addEventListener("mouseup", (e) => {
@@ -136,6 +167,7 @@
         }
         
         function toggleCell(r, c) {
+            if (socket != null) socket.send(JSON.stringify({"dot": [r,c,drawMode ? 1 : 0]}));
             grid[r][c] = drawMode ? 1 : 0;
             renderGrid();
         }
@@ -155,6 +187,7 @@
                 });
             });
             renderGrid();
+            if (socket != null) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
         
         allOffBtn.addEventListener("click", () => {
@@ -164,15 +197,25 @@
                 });
             });
             renderGrid();
+            if (socket != null) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
-        
-        sendBtn.addEventListener("click", () => {
+
+        streamBtn.addEventListener("click", () => {
+            toggleWebSocket();
+        });
+
+        function getCanvasBitwise() {
             const frameOut = Array(cols).fill(0);
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
                     frameOut[c] |= grid[r][c] << r;
                 }
             }
+            return frameOut;
+        }
+        
+        sendBtn.addEventListener("click", () => {
+            const frameOut = getCanvasBitwise();
             response = fetch(window.location.origin + '/mode', {
                 method: 'POST',
                 headers: {
@@ -182,11 +225,31 @@
             });
             Promise.resolve(response).then(response => {
                 if (response.ok) {
-                    output.textContent = JSON.stringify(frameOut);
+                    inputOutputBox.textContent = JSON.stringify(frameOut);
                 } else {
-                    output.textContent = "Error: " + response.statusText;
+                    inputOutputBox.textContent = "Error: " + response.statusText;
                 }  
             })
+        });
+
+        importBtn.addEventListener("click", () => {
+            let frameIn;
+            try {
+                frameIn = JSON.parse(inputOutputBox.value);
+                if (!Array.isArray(frameIn)) {
+                    throw new Error("Invalid format");
+                }
+                for (let c = 0; c < Math.min(cols, frameIn.length); c++) {
+                    for (let r = 0; r < rows; r++) {
+                        grid[r][c] = (frameIn[c] >> r) & 1;
+                    }
+                }
+                renderGrid();
+                inputOutputBox.textContent = "Frame imported!";
+            } catch (err) {
+                inputOutputBox.textContent = "Error importing: " + err.message;
+            }
+            if (socket != null) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
         
         renderGrid();
