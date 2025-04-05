@@ -77,7 +77,7 @@ class WebServer:
             global new_mode
             await websocket.accept()
             self.clients.add(websocket)
-            new_mode = {"mode": "Static", "params": {"frame": [0]*21}}
+            new_mode = {"mode": "Static", "params": {"frame": []}}
             print("WebSocket client connected")
             try:
                 while True:

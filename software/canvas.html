@@ -167,7 +167,7 @@
         }
         
         function toggleCell(r, c) {
-            if (socket != null) socket.send(JSON.stringify({"dot": [r,c,drawMode ? 1 : 0]}));
+            if (socket != null) socket.send(JSON.stringify({"dot": [c,r,drawMode ? 1 : 0]}));
             grid[r][c] = drawMode ? 1 : 0;
             renderGrid();
         }
