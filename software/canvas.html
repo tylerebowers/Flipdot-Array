@@ -252,6 +252,7 @@
         
         sendBtn.addEventListener("click", () => {
             const frameOut = getCanvasBitwise();
+            inputOutputBox.textContent = JSON.stringify(frameOut);
             response = fetch(window.location.origin + '/mode', {
                 method: 'POST',
                 headers: {
@@ -259,13 +260,6 @@
                 },
                 body: JSON.stringify({'mode': 'Static', 'params': {'frame': frameOut}})
             });
-            Promise.resolve(response).then(response => {
-                if (response.ok) {
-                    inputOutputBox.textContent = JSON.stringify(frameOut);
-                } else {
-                    inputOutputBox.textContent = "Error: " + response.statusText;
-                }  
-            })
         });
 
         importBtn.addEventListener("click", () => {
