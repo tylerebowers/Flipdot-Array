@@ -61,9 +61,10 @@ class WebServer:
         async def set_mode(request: Request):
             r = await request.json()
             print("Received: ", r)
-            if self.websocket_client is None or r.get("mode", None) == "System":
-                global new_mode
-                new_mode = r
+            if isinstance(self.websocket_client, WebSocket) and self.websocket_client.client_state == WebSocketState.CONNECTED:
+                await self.websocket_client.close()
+            global new_mode
+            new_mode = r
             return 
 
         @self.app.post("/settings")
