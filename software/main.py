@@ -76,7 +76,7 @@ class WebServer:
         
         @self.app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket): 
-            if self.websocket_client:
+            if self.websocket_client is not None:
                 await self.websocket_client.close(code=1000)  
             await websocket.accept()
             self.websocket_client = websocket
