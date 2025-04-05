@@ -58,10 +58,11 @@ class WebServer:
 
         @self.app.post("/mode")
         async def set_mode(request: Request):
-            if self.websocket_client is None:
+            r = await request.json()
+            print("Received: ", r)
+            if self.websocket_client is None or r.get("mode", None) == "System":
                 global new_mode
-                new_mode = await request.json()
-            print("Received: ", new_mode)
+                new_mode = r
             return 
 
         @self.app.post("/settings")

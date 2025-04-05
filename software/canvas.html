@@ -135,10 +135,12 @@
                 socket.onclose = () => {
                     console.log("WebSocket disconnected");
                     streamBtn.textContent = "Stream: Inactive";
+                    socket = null;
                 };
                 socket.onerror = (error) => {
                     console.error("WebSocket error:", error);
                     streamBtn.textContent = "Stream: Inactive";
+                    socket = null;
                 };
             }
         }
