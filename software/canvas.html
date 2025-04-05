@@ -94,7 +94,7 @@
         const rows = 7, cols = 21;
         let drawMode = true; // true -> drawing, false -> erasing
         let isDrawing = false;
-        let socket = null;
+        let socket = {readyState: WebSocket.CLOSED};
         const canvas = document.getElementById("canvas");
         const modeToggle = document.getElementById("modeToggle");
         const allOnBtn = document.getElementById("all-on");
@@ -108,7 +108,7 @@
         const inputOutputBox = document.getElementById("inputOutputBox");
 
         function toggleWebSocket() {
-            if (socket != null && socket.readyState === WebSocket.OPEN) {
+            if (socket instanceof WebSocket && socket.readyState === WebSocket.OPEN) {
                 socket.close();
                 streamBtn.textContent = "Stream: Inactive";
             } else {
@@ -183,7 +183,7 @@
         }
         
         function toggleCell(r, c) {
-            if (socket != null) socket.send(JSON.stringify({"dot": [c,r,drawMode ? 1 : 0]}));
+            if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({"dot": [c,r,drawMode ? 1 : 0]}));
             grid[r][c] = drawMode ? 1 : 0;
             renderGrid();
         }
@@ -208,7 +208,7 @@
                 });
             });
             renderGrid();
-            if (socket != null) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
+            if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
         
         allOffBtn.addEventListener("click", () => {
@@ -218,7 +218,7 @@
                 });
             });
             renderGrid();
-            if (socket != null) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
+            if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
 
         streamBtn.addEventListener("click", () => {
@@ -270,7 +270,7 @@
             } catch (err) {
                 inputOutputBox.textContent = "Error importing: " + err.message;
             }
-            if (socket != null) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
+            if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
         
         renderGrid();

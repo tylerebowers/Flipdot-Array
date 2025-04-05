@@ -7,9 +7,10 @@ import utils
 import os
 import asyncio
 import platform
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
+from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 from starlette.templating import Jinja2Templates
 
 if "rpi" in platform.release():
@@ -76,35 +77,32 @@ class WebServer:
             return
         
         @self.app.websocket("/ws")
-        async def websocket_endpoint(websocket: WebSocket): 
-            if self.websocket_client is not None:
-                await self.websocket_client.close(code=1000)  
-            await websocket.accept()
+        async def websocket_endpoint(websocket: WebSocket): #does not work with simulator 
+            if isinstance(self.websocket_client, WebSocket) and self.websocket_client.client_state == WebSocketState.CONNECTED:
+                await self.websocket_client.close()
+            
             self.websocket_client = websocket
+            await self.websocket_client.accept()
             print("WebSocket client connected")
 
             global new_mode
-            new_mode = {"mode": "Static", "params": {"frame": []}}
+            new_mode = {"mode": "Static"}
 
             try:
                 while True:
-                    data = await asyncio.wait_for(websocket.receive_json(), timeout=60) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
-                    try:
-                        if data.get("dot", None) != None:
-                            d.write_dot(data["dot"][0], data["dot"][1], bool(data["dot"][2]))
-                        elif data.get("frame", None) != None:
-                            d.write_display(data["frame"])
-                    except Exception as e:
-                        print(e)
+                    data = await asyncio.wait_for(self.websocket_client.receive_json(), timeout=60) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
+                    if data.get("dot", None) != None:
+                        d.write_dot(data["dot"][0], data["dot"][1], bool(data["dot"][2]))
+                    elif data.get("frame", None) != None:
+                        d.write_display(data["frame"])
             except asyncio.TimeoutError:
                 print("WebSocket client inactive - disconnecting")
-                await websocket.close(code=1001) 
+                if self.websocket_client.client_state == WebSocketState.CONNECTED:
+                    await self.websocket_client.close()
             except WebSocketDisconnect:
                 print("WebSocket client disconnected")
             except Exception as e:
                 print("WebSocket error:", e)
-            finally:
-                self.websocket_client = None
 
         
     def run(self):
