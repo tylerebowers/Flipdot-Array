@@ -108,10 +108,9 @@
         const inputOutputBox = document.getElementById("inputOutputBox");
 
         function toggleWebSocket() {
-            if (socket != null) {
+            if (socket != null && socket.readyState === WebSocket.OPEN) {
                 socket.close();
                 streamBtn.textContent = "Stream: Inactive";
-                socket = null;
             } else {
                 socket = new WebSocket(`ws://${window.location.host}/ws`);
                 socket.onopen = () => {
@@ -135,12 +134,10 @@
                 socket.onclose = () => {
                     console.log("WebSocket disconnected");
                     streamBtn.textContent = "Stream: Inactive";
-                    socket = null;
                 };
                 socket.onerror = (error) => {
                     console.error("WebSocket error:", error);
                     streamBtn.textContent = "Stream: Inactive";
-                    socket = null;
                 };
             }
         }
