@@ -49,17 +49,18 @@ class WebServer:
         @self.app.get("/", response_class=HTMLResponse)
         async def get_index(request: Request):
             global new_mode
-            return templates.TemplateResponse("index.html", {"request": request, "display_mode": str(new_mode)})
+            return templates.TemplateResponse("index.html", {"request": request})
         
         @self.app.get("/canvas", response_class=HTMLResponse)
         async def get_index(request: Request):
             global new_mode
-            return templates.TemplateResponse("canvas.html", {"request": request, "display_mode": str(new_mode)})
+            return templates.TemplateResponse("canvas.html", {"request": request})
 
         @self.app.post("/mode")
         async def set_mode(request: Request):
-            global new_mode
-            new_mode = await request.json()
+            if not self.websocket_client:
+                global new_mode
+                new_mode = await request.json()
             print("Received: ", new_mode)
             return 
 
@@ -83,8 +84,8 @@ class WebServer:
 
             global new_mode
             new_mode = {"mode": "Static", "params": {"frame": []}}
-            self.websocket_client.send_json({"frame": self.d.get_shown()})
-            
+            self.websocket_client.send_json({"frame": d.get_shown()})
+
             try:
                 while True:
                     data = await asyncio.wait_for(websocket.receive_json(), timeout=120) # expects: {"dot":[x,y,state]} or {"frame": [_,_, etc.]}
