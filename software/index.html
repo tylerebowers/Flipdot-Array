@@ -63,6 +63,9 @@
             background-color: #e8e8e8;
             border-radius: 5px;
         }
+        input[type=checkbox] {
+            transform: scale(1.5);
+        }
         label {
             display: block;
             margin-top: 8px;
@@ -109,9 +112,17 @@
                 <option value=22>22:00</option>
                 <option value=23>23:00</option>
                 <option value=24 selected>24:00</option>
-            </select>
-            <label><input type="checkbox" id="clock-format"> 24 Hour</label>
-            <button onclick="mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked), start_hour: document.getElementById('clock-start').value, stop_hour: document.getElementById('clock-stop').value})">Set Mode</button>
+            </select> <br>
+            Font: <select id="clock-font">
+                <option value=standard>Standard</option>
+                <option value=block>Block</option>
+                <option value=segment>7-Segment</option>
+            </select> <br>
+            <label><input type="checkbox" id="clock-format">&nbsp;&nbsp;24 Hour</label>
+            <button onclick="mode('Clock', {hours_24: Boolean(document.getElementById('clock-format').checked), 
+                                            start_hour: document.getElementById('clock-start').value, 
+                                            stop_hour: document.getElementById('clock-stop').value,
+                                            font: document.getElementById('clock-font').value})">Set Mode</button>
         </div>
 
         <div class="section">
@@ -140,7 +151,7 @@
 
         <div class="section">
             <strong>Weather</strong> <br>
-            <label><input type="checkbox" id="weather-format"> Use Celsius</label>
+            <label><input type="checkbox" id="weather-format">&nbsp;&nbsp;Use Celsius</label>
             <button onclick="mode('Weather', {use_celsius: Boolean(document.getElementById('weather-format').checked)})">Set Mode</button>
         </div>
 
