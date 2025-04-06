@@ -25,6 +25,12 @@ class Clock:
                 self.lib = libraries.numbers_7x4_block
             case "segment":
                 self.lib = libraries.numbers_7x4_segment
+            case "futuristic":
+                self.lib = libraries.numbers_7x4_futuristic
+            case "bubble":
+                self.lib = libraries.numbers_7x4_bubble
+            case "futuristic2":
+                self.lib = libraries.numbers_7x4_futuristic2
             case _:
                 self.lib = libraries.numbers_7x4
 
