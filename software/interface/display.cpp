@@ -243,7 +243,7 @@ PYBIND11_MODULE(display, m) {
         pybind11::arg("new_display"),
         pybind11::arg("start_x") = 0,
         pybind11::arg("start_y") = 0,
-        pybind11::arg("force") = false)
+        pybind11::arg("force") = false);
 }
 
 /*
