@@ -252,7 +252,7 @@
         
         sendBtn.addEventListener("click", () => {
             const frameOut = getCanvasBitwise();
-            inputOutputBox.textContent = JSON.stringify(frameOut);
+            inputOutputBox.value = JSON.stringify(frameOut);
             response = fetch(window.location.origin + '/mode', {
                 method: 'POST',
                 headers: {
@@ -275,9 +275,8 @@
                     }
                 }
                 renderGrid();
-                inputOutputBox.textContent = "Frame imported!";
             } catch (err) {
-                inputOutputBox.textContent = "Error importing: " + err.message;
+                inputOutputBox.value = "Error importing: " + err.message;
             }
             if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({"frame": getCanvasBitwise()}));
         });
