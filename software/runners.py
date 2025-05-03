@@ -16,6 +16,7 @@ class Clock:
 
         self.start_hour = int(params.get("start_hour", -1) or -1)
         self.stop_hour = int(params.get("stop_hour", 25) or 25)
+        self.leading_zero = bool(params.get("leading_zero", True) or True)
 
         font = params.get("font", "standard")
         match font:
@@ -29,8 +30,6 @@ class Clock:
                 self.lib = libraries.numbers_7x4_futuristic
             case "bubble":
                 self.lib = libraries.numbers_7x4_bubble
-            case "futuristic2":
-                self.lib = libraries.numbers_7x4_futuristic2
             case _:
                 self.lib = libraries.numbers_7x4
 
@@ -43,16 +42,20 @@ class Clock:
     def update(self):
         now = datetime.datetime.now()
         if now.hour >= self.start_hour and now.hour < self.stop_hour and now.minute != self.shown_time.minute:
+                x_offset = 0
                 self.shown_time = now
-                self.d.write_display(self.lib[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)])
-                self.d.write_display([0], start_x=4)
-                self.d.write_display(self.lib[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=5)
-                self.d.write_display([0], start_x=9)
-                self.d.write_display(libraries.ascii_7[":"], start_x=10)
-                self.d.write_display([0], start_x=11)
-                self.d.write_display(self.lib[int(now.minute / 10)], start_x=12)
-                self.d.write_display([0], start_x=16)
-                self.d.write_display(self.lib[now.minute % 10], start_x=17)
+                if self.leading_zero or now.hour >= 10:
+                    x_offset = 2
+                    self.d.write_display(self.lib[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)])
+                    self.d.write_display([0], start_x=x_offset+2)
+                
+                self.d.write_display(self.lib[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=x_offset+3)
+                self.d.write_display([0], start_x=x_offset+7)
+                self.d.write_display(libraries.ascii_7[":"], start_x=x_offset+8)
+                self.d.write_display([0], start_x=x_offset+9)
+                self.d.write_display(self.lib[int(now.minute / 10)], start_x=x_offset+10)
+                self.d.write_display([0], start_x=x_offset+14)
+                self.d.write_display(self.lib[now.minute % 10], start_x=x_offset+15)
         elif now.hour != self.shown_time.hour:
             self.d.write_display(libraries.screens["sleep"])
         time.sleep(1)
