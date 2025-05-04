@@ -48,6 +48,8 @@ class Clock:
                     x_offset = 2
                     self.d.write_display(self.lib[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)])
                     self.d.write_display([0], start_x=x_offset+2)
+                else:
+                    self.d.write_display([0,0,0], start_x=0)
                 
                 self.d.write_display(self.lib[int(now.hour%10 if self.hours_24 else int(now.strftime("%I")) % 10)], start_x=x_offset+3)
                 self.d.write_display([0], start_x=x_offset+7)
@@ -56,6 +58,8 @@ class Clock:
                 self.d.write_display(self.lib[int(now.minute / 10)], start_x=x_offset+10)
                 self.d.write_display([0], start_x=x_offset+14)
                 self.d.write_display(self.lib[now.minute % 10], start_x=x_offset+15)
+                if x_offset == 0:
+                    self.d.write_display([0,0], start_x=19)
         elif now.hour != self.shown_time.hour:
             self.d.write_display(libraries.screens["sleep"])
         time.sleep(1)
