@@ -16,7 +16,7 @@ class Clock:
 
         self.start_hour = int(params.get("start_hour", -1) or -1)
         self.stop_hour = int(params.get("stop_hour", 25) or 25)
-        self.leading_zero = bool(params.get("leading_zero", True) or True)
+        self.leading_zero = bool(params.get("leading_zero", False) or False)
 
         font = params.get("font", "standard")
         match font:
@@ -44,7 +44,7 @@ class Clock:
         if now.hour >= self.start_hour and now.hour < self.stop_hour and now.minute != self.shown_time.minute:
                 x_offset = 0
                 self.shown_time = now
-                if self.leading_zero or now.hour >= 10:
+                if self.leading_zero or (int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10) != 0):
                     x_offset = 2
                     self.d.write_display(self.lib[int(now.hour/10 if self.hours_24 else int(now.strftime("%I")) / 10)])
                     self.d.write_display([0], start_x=x_offset+2)
