@@ -119,7 +119,7 @@ public:
             digitalWrite(_ser, LOW);
 
             _enable();
-            this_thread::sleep_for(chrono::microseconds(120));
+            this_thread::sleep_for(chrono::microseconds(150));
             _disable();
         }
     }
