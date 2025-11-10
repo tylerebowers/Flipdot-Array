@@ -194,9 +194,22 @@ class Weather:
             self.d.write_display(libraries.weather.get(code, []), start_x=0)
             if not self.use_celsius:
                 temp = (temp * 1.8) + 32
-            self.d.write_display(libraries.numbers_7x3[int(temp/10)], start_x=8)
-            self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=12)
-            self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16)
+
+            if temp >= 100:
+                self.d.write_display([2,127], start_x=8)
+                self.d.write_display(libraries.numbers_7x3[((temp%100)//10)], start_x=11)
+                self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=15)
+                self.d.write_display(libraries.special["degrees_c_compact" if self.use_celsius else "degrees_f_compact"], start_x=19)
+            elif temp < 0:
+                temp*=-1
+                self.d.write_display([8,8], start_x=8)
+                if temp//10 > 0: self.d.write_display(libraries.numbers_7x3[temp//10], start_x=11)
+                self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=15 if temp//10 > 0 else 12)
+                self.d.write_display(libraries.special[("degrees_c" if self.use_celsius else "degrees_f") + ("_compact" if temp//10 > 0 else "")], start_x=19 if temp//10 > 0 else 16)
+            else:
+                if temp//10 > 0: self.d.write_display(libraries.numbers_7x3[temp//10], start_x=8)
+                self.d.write_display(libraries.numbers_7x3[int(temp%10)], start_x=12)
+                self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16)
 
         time.sleep(1)
 
