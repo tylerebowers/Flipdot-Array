@@ -170,6 +170,8 @@ class Weather:
         self.use_celsius = params.get("use_celsius", False)
         self.latitude = params.get("latitude", 0)
         self.longitude = params.get("longitude", 0)
+        self.start_hour = 7
+        self.stop_hour = 23
         if self.latitude == 0 or self.longitude == 0:
             try: 
                 r = requests.get("https://ipinfo.io").json()
@@ -182,7 +184,7 @@ class Weather:
 
     def update(self):
         now = datetime.datetime.now()
-        if (now - self.last_update).total_seconds() > 300:
+        if now.hour >= self.start_hour and now.hour < self.stop_hour and (now - self.last_update).total_seconds() > 600:
             try: 
                 r = requests.get(self.weather_api_url).json()
                 temp = r["current"]["temperature_2m"]
@@ -217,7 +219,8 @@ class Weather:
                     self.d.write_display([0,0,0,0], start_x=8)
                 self.d.write_display(libraries.numbers_7x3[temp%10]+[0], start_x=12)
                 self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16)
-
+        elif now.hour < self.start_hour and now.hour >= self.stop_hour and now.hour != self.last_update.hour:
+            self.d.write_display(libraries.screens["sleep"])
         time.sleep(1)
 
     def __str__(self):
