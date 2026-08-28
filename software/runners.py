@@ -219,7 +219,7 @@ class Weather:
                     self.d.write_display([0,0,0,0], start_x=8)
                 self.d.write_display(libraries.numbers_7x3[temp%10]+[0], start_x=12)
                 self.d.write_display(libraries.special["degrees_c" if self.use_celsius else "degrees_f"], start_x=16)
-        elif now.hour < self.start_hour and now.hour >= self.stop_hour and now.hour != self.last_update.hour:
+        elif (now.hour < self.start_hour or now.hour >= self.stop_hour) and now.hour != self.last_update.hour:
             self.d.write_display(libraries.screens["sleep"])
         time.sleep(1)
 
