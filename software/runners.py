@@ -180,7 +180,7 @@ class Weather:
             except Exception as e:
                 print(e)
         self.weather_api_url = f"https://api.open-meteo.com/v1/forecast?latitude={self.latitude}&longitude={self.longitude}&current=temperature_2m,weather_code"
-        self.last_update = datetime.datetime.now() - datetime.timedelta(minutes=15)
+        self.last_update = datetime.datetime.now() - datetime.timedelta(minutes=61)
 
     def update(self):
         now = datetime.datetime.now()
