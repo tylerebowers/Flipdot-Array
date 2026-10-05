@@ -193,7 +193,7 @@ class Weather:
                 print(e)
                 return
             self.last_update = now # we dont want to spam api if it is down
-            self.d.write_display(libraries.weather.get(code, []), start_x=0)
+            self.d.write_display(libraries.weather.get(code, [])+[0], start_x=0)
             if not self.use_celsius:
                 temp = (temp * 1.8) + 32
             temp = int(temp)
